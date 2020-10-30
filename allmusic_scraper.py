@@ -22,15 +22,18 @@ def get_new_releases():
         f.write(html)
     soup = BeautifulSoup(html, 'html.parser')
 
-    print(html)
-    features = {}
+    # Extract all new features from the html
     albums_divs = soup.find_all('div', {"class": "new-release"})
 
-    print(albums_divs)
+    # Create dictionary of data : artist, name of album and genre
+    new_features = {}
+    new_features_list = []
 
-    # for div in content_dif:
-    #
-    #
-    # print(features)
+    for div in albums_divs:
+        new_features['artist'] = div.find('div', {"class" : "artist"}).a.contents[0]
+        new_features['album'] = div.find('div', {"class" : "title"}).a.contents[0]
+        new_features['genres'] = div.find('div', {"class" : "genres"}).a.contents[0]
+        new_features_list.append(new_features)
 
-    # TODO
+    return new_features_list
+
