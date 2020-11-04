@@ -1,11 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-from album import Album
-
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
-
-NEW_RELEASES = 'https://www.allmusic.com/newreleases'
+from models.album import Album
+from models.constants import USER_AGENT, BASE_URL, NEW_RELEASES
 
 
 def get_new_releases():
@@ -18,7 +15,8 @@ def get_new_releases():
     ]
     """
     headers = {"User-Agent": USER_AGENT}
-    response = requests.get(NEW_RELEASES, headers=headers)
+    url = BASE_URL + NEW_RELEASES
+    response = requests.get(url, headers=headers)
     html = response.text
     with open('allmusic.html', 'w') as f:
         f.write(html)
@@ -33,7 +31,7 @@ def get_new_releases():
 
     albums = [Album(album_div) for album_div in albums_divs]
     for album in albums:
-        print(album.url)
+        print(album.details.duration)
     # for div in albums_divs:
         # album = Album(div)
         # albums.append(album)
