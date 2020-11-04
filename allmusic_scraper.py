@@ -28,14 +28,17 @@ def get_new_releases():
     albums_divs = soup.find_all('div', {"class": "new-release"})
 
     # Create dictionary of data : artist, name of album and genre
-    # new_features = {}
-    # new_features_list = []
+    new_features = {}
+    new_features_list = []
 
     albums = [Album(album_div) for album_div in albums_divs]
-
+    for album in albums:
+        print(album.url)
     # for div in albums_divs:
-    #     album = Album(div)
-    #     albums.append(album)
+        # album = Album(div)
+        # albums.append(album)
+
+
 
         # new_features['artist'] = div.find('div', {"class": "artist"}).text.strip()
         # new_features['album'] = div.find('div', {"class": "title"}).text.strip()
@@ -44,4 +47,4 @@ def get_new_releases():
         # new_features['label'] = div.find('div', {"class": "allmusic-rating-new"}).text.strip()
         # new_features_list.append(new_features)
 
-    return albums
+    return new_features_list
