@@ -1,5 +1,5 @@
-from models.details import AlbumDetails
-from models.lazy_loader import SoupLoader
+from models.album_details import AlbumDetails
+from models.soup_loader import SoupLoader
 
 IMAGE_CONTAINER = "image-container"
 

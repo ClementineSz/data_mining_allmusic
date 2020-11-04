@@ -1,4 +1,4 @@
-from models.lazy_loader import SoupLoader
+from models.soup_loader import SoupLoader
 
 
 class AlbumDetails(SoupLoader):
