@@ -4,9 +4,9 @@ from models.soup_loader import SoupLoader
 
 
 class AlbumDetails(SoupLoader):
-    def __init__(self, metadata, url):
-        super().__init__(url=url)
+    def __init__(self, metadata):
         self.metadata = metadata
+        super().__init__(url=self.metadata.get('details_url'))
 
     @property
     def duration(self):

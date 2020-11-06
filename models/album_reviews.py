@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
 from models.album_review import AlbumReview
-from models.constants import BASE_URL
+from models.constants import BASE_URL, USER_REVIEWS
 from models.soup_loader import SoupLoader
 from utils import make_request
 
@@ -16,7 +16,8 @@ class AlbumReviews(SoupLoader):
         data = {
             'title': self.metadata.get('title')
         }
-        response = make_request(url, post=True, data=data)
+        headers = {'referer': BASE_URL + self.metadata.get('details_url') + USER_REVIEWS}
+        response = make_request(url, headers=headers, data=data, post=True)
         self._soup = BeautifulSoup(response.text, 'html.parser')
 
     def __getitem__(self, index):

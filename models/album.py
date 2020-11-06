@@ -46,9 +46,10 @@ class Album(SoupLoader):
     def details(self):
         metadata = {
             'id': self.id,
-            'title': self.title
+            'title': self.title,
+            'details_url': self.details_url
         }
-        return AlbumDetails(metadata, url=self.details_url)
+        return AlbumDetails(metadata)
 
     @property
     def id(self):
