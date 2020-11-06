@@ -40,7 +40,7 @@ class Album(SoupLoader):
 
     @property
     def details(self):
-        return AlbumDetails(url=self.details_url)
+        return AlbumDetails(self.id, url=self.details_url)
 
     @property
     def id(self):

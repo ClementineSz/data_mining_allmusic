@@ -4,7 +4,7 @@ from models.soup_loader import SoupLoader
 
 class AlbumReviews(SoupLoader):
     def __init__(self, url):
-        super().__init__(url=url)
+        super().__init__(url=url, is_post=True)
 
     def __getitem__(self, index):
         return self._reviews[index]

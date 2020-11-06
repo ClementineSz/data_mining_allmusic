@@ -10,7 +10,7 @@ def get_new_albums():
 
     """
     url = BASE_URL + NEW_RELEASES
-    response = utils.get_request(url)
+    response = utils.make_request(url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     # Extract all new features from the html
