@@ -1,3 +1,5 @@
+import re
+
 from models.album_details import AlbumDetails
 from models.soup_loader import SoupLoader
 
@@ -39,5 +41,9 @@ class Album(SoupLoader):
     @property
     def details(self):
         return AlbumDetails(url=self.details_url)
+
+    @property
+    def id(self):
+        return re.search('(-)(.*)', self.details_url).group(2)
 
 
