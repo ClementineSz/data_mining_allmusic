@@ -1,7 +1,11 @@
 import re
 
+from bs4 import BeautifulSoup
+
 from models.album_details import AlbumDetails
+from models.constants import BASE_URL
 from models.soup_loader import SoupLoader
+from utils import make_request
 
 IMAGE_CONTAINER = "image-container"
 
@@ -19,7 +23,7 @@ class Album(SoupLoader):
         super().__init__(soup=soup)
 
     @property
-    def name(self):
+    def title(self):
         return self.find('div', {"class": TITLE}).text.strip()
 
     @property
@@ -40,7 +44,11 @@ class Album(SoupLoader):
 
     @property
     def details(self):
-        return AlbumDetails(self.id, url=self.details_url)
+        metadata = {
+            'id': self.id,
+            'title': self.title
+        }
+        return AlbumDetails(metadata, url=self.details_url)
 
     @property
     def id(self):

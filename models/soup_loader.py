@@ -5,10 +5,9 @@ from utils import make_request
 
 
 class SoupLoader:
-    def __init__(self, is_post=False, soup=None, url=None):
+    def __init__(self, soup=None, url=None):
         self.url = url
         self._soup = soup
-        self.is_post = is_post
 
     @property
     def soup(self):
@@ -18,8 +17,7 @@ class SoupLoader:
 
     def _load_soup(self):
         url = BASE_URL + self.url
-        response = make_request(url, self.is_post)
-
+        response = make_request(url)
         self._soup = BeautifulSoup(response.text, 'html.parser')
 
     def find(self, div, parameters):
