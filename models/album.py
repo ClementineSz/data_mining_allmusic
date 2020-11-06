@@ -14,7 +14,7 @@ TITLE = "title"
 
 class Album(SoupLoader):
     def __init__(self, soup):
-        super().__init__(soup=soup, loaded=True)
+        super().__init__(soup=soup)
 
     @property
     def name(self):

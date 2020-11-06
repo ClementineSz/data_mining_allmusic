@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from models.constants import ALBUM, BASE_URL
+from models.constants import BASE_URL
 from utils import get_request
 
 
@@ -22,6 +22,6 @@ class SoupLoader:
 
     def find(self, div, parameters):
         try:
-            return self.soup.find(div, parameters).find('span').text.strip()
+            return self.soup.find(div, parameters)
         except AttributeError:
             print(f'No {parameters} in {div}')

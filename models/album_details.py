@@ -8,3 +8,7 @@ class AlbumDetails(SoupLoader):
     @property
     def duration(self):
         return self.find('div', {"class": "duration"})
+
+    @property
+    def genre(self):
+        return self.find('div', {"class": "genre"})

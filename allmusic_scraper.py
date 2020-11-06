@@ -11,7 +11,7 @@ def get_new_albums():
     """
     url = BASE_URL + NEW_RELEASES
     response = utils.get_request(url)
-    soup = BeautifulSoup(response.txt, 'html.parser')
+    soup = BeautifulSoup(response.text, 'html.parser')
 
     # Extract all new features from the html
     albums_divs = soup.find_all('div', {"class": "new-release"})
