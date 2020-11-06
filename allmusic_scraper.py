@@ -16,4 +16,10 @@ def get_new_albums():
     # Extract all new features from the html
     albums_divs = soup.find_all('div', {"class": "new-release"})
 
-    return [Album(album_div) for album_div in albums_divs]
+    albums = []
+    for i, album_div in enumerate(albums_divs):
+        album = Album(album_div)
+        print(f'[{i}/{len(albums_divs)}] - Finished extracting {album.title}')
+        utils.pretty_print(album.json())
+        albums.append(album)
+    return albums

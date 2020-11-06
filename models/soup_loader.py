@@ -5,23 +5,11 @@ from utils import make_request
 
 
 class SoupLoader:
-    def __init__(self, soup=None, url=None):
+    def __init__(self, url):
         self.url = url
-        self._soup = soup
+        self.soup = self.load_soup()
 
-    @property
-    def soup(self):
-        if not self._soup:
-            self._load_soup()
-        return self._soup
-
-    def _load_soup(self):
+    def load_soup(self):
         url = BASE_URL + self.url
         response = make_request(url)
-        self._soup = BeautifulSoup(response.text, 'html.parser')
-
-    def find(self, div, parameters):
-        try:
-            return self.soup.find(div, parameters)
-        except AttributeError:
-            print(f'No {parameters} in {div}')
+        return BeautifulSoup(response.text, 'html.parser')

@@ -1,58 +1,58 @@
+import json
 import re
 
-from bs4 import BeautifulSoup
-
 from models.album_details import AlbumDetails
-from models.constants import BASE_URL
-from models.soup_loader import SoupLoader
-from utils import make_request
+from models.constants import ALBUM
+from models.soup_manager import SoupManager
 
 IMAGE_CONTAINER = "image-container"
-
 LABELS = "labels"
-
 GENRES = "genres"
-
 ARTIST = "artist"
-
 TITLE = "title"
 
 
-class Album(SoupLoader):
+class Album:
     def __init__(self, soup):
-        super().__init__(soup=soup)
+        self.soup = soup
+        self.details = AlbumDetails(self)
 
     @property
     def title(self):
-        return self.find('div', {"class": TITLE}).text.strip()
+        return self.soup.find('div', {"class": TITLE}).text.strip().lower()
 
     @property
     def artist(self):
-        return self.find('div', {"class": ARTIST}).text.strip()
+        return self.soup.find('div', {"class": ARTIST}).text.strip()
 
     @property
     def genre(self):
-        return self.find('div', {"class": GENRES}).text.strip()
+        return self.soup.find('div', {"class": GENRES}).text.strip()
 
     @property
     def label(self):
-        return self.find('div', {"class": LABELS}).text.strip()
+        return self.soup.find('div', {"class": LABELS}).text.strip()
 
     @property
     def details_url(self):
-        return self.find('div', {"class": IMAGE_CONTAINER}).a['href'].strip()
-
-    @property
-    def details(self):
-        metadata = {
-            'id': self.id,
-            'title': self.title,
-            'details_url': self.details_url
-        }
-        return AlbumDetails(metadata)
+        joined_title = '-'.join(self.title.split())
+        return f"{ALBUM}{joined_title}-{self.id}"
 
     @property
     def id(self):
-        return re.search('(-)(.*)', self.details_url).group(2)
+        endpoint = self.soup.find('div', {"class": IMAGE_CONTAINER}).a['href'].strip()
+        return re.search('(mw.*)', endpoint).group(1)
+
+    def json(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'artist': self.artist,
+            'genre': self.genre,
+            'label': self.label,
+            'details_url': self.details_url,
+            'details': self.details.json()
+        }
+
 
 

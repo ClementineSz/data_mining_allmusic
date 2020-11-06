@@ -1,3 +1,6 @@
+import re
+
+
 class AlbumReview:
     def __init__(self, soup):
         self.soup = soup
@@ -12,7 +15,17 @@ class AlbumReview:
 
     @property
     def rating(self):
-        return self.soup.find('div', {"class": "data"}).find('div', {"class": "profile-user-rating"})
+        classes = self.soup.find('div', {"class": "data"}).find('div', {"class": "profile-user-rating"})['class']
+        rating_class = classes[-1]
+        rating = re.search('([0-9])', rating_class).group(1)
+        return rating
+
+    def json(self):
+        return {
+            'name': self.name,
+            'date': self.date,
+            'rating': self.rating,
+        }
 
 
 
