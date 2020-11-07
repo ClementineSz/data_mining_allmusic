@@ -36,6 +36,39 @@ class AlbumDetails:
         return ALBUM + FETCH_REVIEW + self.album.id
 
     @property
+    def styles(self):
+        styles_div = self.soup.find('div', {"class": "styles"})
+        styles_a = styles_div.find_all('a')
+        return [style.text.strip() for style in styles_a]
+
+    @property
+    def moods(self):
+        moods_div = self.soup.find('section', {"class": "moods"})
+        mood_spans = moods_div.find_all('span', {"class": "mood"})
+        return [mood.text.lower().strip() for mood in mood_spans]
+
+    @property
+    def themes(self):
+        themes_div = self.soup.find('section', {"class": "themes"})
+        theme_spans = themes_div.find_all('span', {"class": "theme"})
+        return [theme.text.lower().strip() for theme in theme_spans]
+
+    @property
+    def review_body(self):
+        return self.soup.find('div', {'itemprop': 'reviewBody'}).text.strip()
+
+    @property
+    def track_listing(self):
+        track_listing_divs = self.soup.find_all('tr', {"class": "track"})
+        tracks = []
+        for track_listing_div in track_listing_divs:
+            tracknum = track_listing_div.find('td', {'class': 'tracknum'}).text
+            title = track_listing_div.find('div', {'class': 'title'}).text
+            composer = track_listing_div.find('div', {'class': 'composer'}).text
+            performer = track_listing_div.find('td', {'class': 'performer'}).text
+            tracknum = track_listing_div.find('td', {'class': 'tracknum'})
+
+    @property
     def user_ratings(self):
         user_ratings_div = self.soup.find('ul', {"class": RATINGS})
         classes = self.soup.find('ul', {"class": "ratings"}).find('div', {"class": "average-user-rating"})['class']
@@ -47,6 +80,11 @@ class AlbumDetails:
 
     def json(self):
         return {
+            'track_listing': self.track_listing,
+            'review_body': self.review_body,
+            'themes': self.themes,
+            'moods': self.moods,
+            'styles': self.styles,
             'duration': self.duration,
             'genre': self.genre,
             'review_url': self.review_url,

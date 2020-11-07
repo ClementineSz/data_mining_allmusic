@@ -20,6 +20,7 @@ class AlbumReview:
         rating = re.search('([0-9])', rating_class).group(1)
         return rating
 
+
     def json(self):
         return {
             'name': self.name,
