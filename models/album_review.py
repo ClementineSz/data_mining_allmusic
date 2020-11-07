@@ -1,5 +1,11 @@
 import re
 
+MIDDLE = 'middle'
+
+DATA = "data"
+
+PROFILE_USER_RATING = "profile-user-rating"
+
 
 class AlbumReview:
     def __init__(self, soup):
@@ -7,22 +13,22 @@ class AlbumReview:
 
     @property
     def name(self):
-        return self.soup.find('div', {"class": "data"}).find_all('p')[0].text.strip()
+        return self.soup.find('div', {"class": DATA}).find_all('p')[0].text.strip()
 
     @property
     def date(self):
-        return self.soup.find('div', {"class": "data"}).find_all('p')[1].text.strip()
+        return self.soup.find('div', {"class": DATA}).find_all('p')[1].text.strip()
 
     @property
     def rating(self):
-        classes = self.soup.find('div', {"class": "data"}).find('div', {"class": "profile-user-rating"})['class']
+        classes = self.soup.find('div', {"class": DATA}).find('div', {"class": PROFILE_USER_RATING})['class']
         rating_class = classes[-1]
         rating = re.search('([0-9])', rating_class).group(1)
         return rating
 
     @property
     def content(self):
-        return self.soup.find('div', {'class': 'middle'}).text.strip()
+        return self.soup.find('div', {'class': MIDDLE}).text.strip()
 
     def json(self):
         return {

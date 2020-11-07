@@ -18,12 +18,6 @@ class AlbumCredits:
         return BeautifulSoup(response.text, 'html.parser')
 
     @property
-    def artist(self):
-        section_credits = self.soup.find('section', {"class": CREDITS_})
-        artist = [section_credits.find('td', {"class": "artist"}).a.text for s in section_credits]
-        return artist
-
-    @property
     def credits(self):
         section_credits = self.soup.find('section', {"class": CREDITS_})
         section_credits_tr = section_credits.find_all('tr')

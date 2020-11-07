@@ -8,13 +8,13 @@ from models.constants import USER_AGENT
 def soup_extractor(func):
     def wrapper(self):
         print("Something is happening before the function is called.")
-        result = func(self)
+        try:
+            result = func(self)
+        except AttributeError:
+            return None
         print("Something is happening after the function is called.")
         return result
-    try:
-        return wrapper
-    except AttributeError:
-        return None
+    return wrapper
 
 
 def make_request(url, data=None, post=False, headers=None):
