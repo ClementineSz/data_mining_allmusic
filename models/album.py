@@ -4,6 +4,7 @@ import re
 from models.album_credits import AlbumCredits
 from models.album_details import AlbumDetails
 from models.constants import ALBUM
+from utils import soup_extractor
 
 AUTHOR = "author"
 
@@ -23,32 +24,37 @@ class Album:
         self.credits = AlbumCredits(self)
 
     @property
+    @soup_extractor
     def title(self):
         return self.soup.find('div', {"class": TITLE}).text.strip().lower()
 
     @property
+    @soup_extractor
     def artist(self):
         return self.soup.find('div', {"class": ARTIST}).text.strip()
 
     @property
+    @soup_extractor
     def genre(self):
         return self.soup.find('div', {"class": GENRES}).text.strip()
 
     @property
+    @soup_extractor
     def label(self):
         return self.soup.find('div', {"class": LABELS}).text.strip()
 
     @property
+    @soup_extractor
     def details_url(self):
-        joined_title = '-'.join(self.title.split())
-        return f"{ALBUM}{joined_title}-{self.id}"
+        return self.soup.find('div', {"class": IMAGE_CONTAINER}).a['href'].strip()
+
 
     @property
     def id(self):
-        endpoint = self.soup.find('div', {"class": IMAGE_CONTAINER}).a['href'].strip()
-        return re.search('(mw.*)', endpoint).group(1)
+        return re.search('.*-(.*)', self.details_url).group(1)
 
     @property
+    @soup_extractor
     def headline_review(self):
         headline_div = self.soup.find('div', {"class": HEADLINE_REVIEW})
         return {

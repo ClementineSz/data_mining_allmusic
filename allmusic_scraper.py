@@ -19,7 +19,9 @@ def get_new_albums():
     albums = []
     for i, album_div in enumerate(albums_divs):
         album = Album(album_div)
-        print(f'[{i}/{len(albums_divs)}] - Finished extracting {album.title}')
         utils.pretty_print(album.json())
+
+        print(f'[{i}/{len(albums_divs)}] - Finished extracting {album.title}')
+
         albums.append(album)
     return albums

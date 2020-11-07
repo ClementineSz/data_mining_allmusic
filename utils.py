@@ -7,12 +7,10 @@ from models.constants import USER_AGENT
 
 def soup_extractor(func):
     def wrapper(self):
-        print("Something is happening before the function is called.")
         try:
             result = func(self)
         except AttributeError:
             return None
-        print("Something is happening after the function is called.")
         return result
     return wrapper
 
