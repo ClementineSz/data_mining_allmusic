@@ -2,8 +2,6 @@ from bs4 import BeautifulSoup
 
 from models.album_reviews import AlbumReviews
 from models.constants import BASE_URL, NEW_RELEASES, ALBUM, FETCH_REVIEW
-from models.soup_loader import SoupLoader
-from models.soup_manager import SoupManager
 from utils import make_request
 
 

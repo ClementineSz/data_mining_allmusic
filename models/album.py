@@ -4,7 +4,6 @@ import string
 
 from models.album_details import AlbumDetails
 from models.constants import ALBUM
-from models.soup_manager import SoupManager
 
 AUTHOR = "author"
 
