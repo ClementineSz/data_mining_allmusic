@@ -65,3 +65,5 @@ class Album:
             'details': self.details.json(),
             'headline_review': self.headline_review
         }
+
+
