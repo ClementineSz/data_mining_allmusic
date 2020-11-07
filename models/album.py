@@ -1,5 +1,6 @@
 import json
 import re
+import string
 
 from models.album_details import AlbumDetails
 from models.constants import ALBUM
@@ -50,7 +51,7 @@ class Album:
     @property
     def headline_review(self):
         headline_div = self.soup.find('div', {"class": HEADLINE_REVIEW})
-        return {'author': headline_div.find('div', {"class": AUTHOR}).text.strip(' -'),
+        return {'author': headline_div.find('div', {"class": AUTHOR}).text.strip(string.punctuation),
                 'content': headline_div.text.strip(),
                 }
 
