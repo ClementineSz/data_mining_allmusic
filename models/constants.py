@@ -9,3 +9,5 @@ ALBUM = 'album/'
 FETCH_REVIEW = 'fetch_review_view/'
 
 USER_REVIEWS = '/user-reviews/'
+
+CREDITS = '/credits'

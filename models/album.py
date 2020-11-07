@@ -1,6 +1,7 @@
 import json
 import re
 
+from models.album_credits import AlbumCredits
 from models.album_details import AlbumDetails
 from models.constants import ALBUM
 
@@ -19,6 +20,7 @@ class Album:
     def __init__(self, soup):
         self.soup = soup
         self.details = AlbumDetails(self)
+        self.credits = AlbumCredits(self)
 
     @property
     def title(self):
@@ -63,7 +65,8 @@ class Album:
             'label': self.label,
             'details_url': self.details_url,
             'details': self.details.json(),
-            'headline_review': self.headline_review
+            'headline_review': self.headline_review,
+            'credits': self.credits.json()
         }
 
 
