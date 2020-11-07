@@ -3,7 +3,6 @@ import re
 
 from models.album_details import AlbumDetails
 from models.constants import ALBUM
-from models.soup_manager import SoupManager
 
 AUTHOR = "author"
 
@@ -50,9 +49,10 @@ class Album:
     @property
     def headline_review(self):
         headline_div = self.soup.find('div', {"class": HEADLINE_REVIEW})
-        return {'author': headline_div.find('div', {"class": AUTHOR}).text.strip(' -'),
-                'content': headline_div.text.strip(),
-                }
+        return {
+            'author': headline_div.find('div', {"class": AUTHOR}).text.strip('\n -'),
+            'content': headline_div.find(text=True, recursive=False).strip(),
+        }
 
     def json(self):
         return {
@@ -65,5 +65,3 @@ class Album:
             'details': self.details.json(),
             'headline_review': self.headline_review
         }
-
-
