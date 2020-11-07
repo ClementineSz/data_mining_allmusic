@@ -1,8 +1,10 @@
+from datetime import datetime, timedelta
+
 from bs4 import BeautifulSoup
 import re
 from models.album_reviews import AlbumReviews
 from models.constants import BASE_URL, NEW_RELEASES, ALBUM, FETCH_REVIEW
-from utils import make_request
+from utils import make_request, soup_extractor
 
 USER_RATING_COUNT = "average-user-rating-count"
 
@@ -22,10 +24,11 @@ class AlbumDetails:
 
     @property
     def duration(self):
-        try:
-            return self.soup.find('div', {"class": "duration"}).span.text.strip()
-        except AttributeError:
-            pass
+        string = self.soup.find('div', {"class": "duration"}).span.text.strip()
+        time = datetime.strptime(string, '%M:%S')
+        seconds = timedelta(seconds=time.second, minutes=time.minute).seconds
+        return seconds
+
 
     @property
     def genre(self):
@@ -48,6 +51,7 @@ class AlbumDetails:
         return [mood.text.lower().strip() for mood in mood_spans]
 
     @property
+    @soup_extractor
     def themes(self):
         themes_div = self.soup.find('section', {"class": "themes"})
         theme_spans = themes_div.find_all('span', {"class": "theme"})
@@ -62,12 +66,22 @@ class AlbumDetails:
         track_listing_divs = self.soup.find_all('tr', {"class": "track"})
         tracks = []
         for track_listing_div in track_listing_divs:
-            tracknum = track_listing_div.find('td', {'class': 'tracknum'}).text
-            title = track_listing_div.find('div', {'class': 'title'}).text
-            composer = track_listing_div.find('div', {'class': 'composer'}).text
-            performer = track_listing_div.find('td', {'class': 'performer'}).text
-            tracknum = track_listing_div.find('td', {'class': 'tracknum'})
-
+            tracknum = track_listing_div.find('td', {'class': 'tracknum'}).text.strip()
+            title = track_listing_div.find('div', {'class': 'title'}).text.strip()
+            composer = track_listing_div.find('div', {'class': 'composer'}).text.strip()
+            performer = track_listing_div.find('td', {'class': 'performer'}).text.strip()
+            time = track_listing_div.find('td', {'class': 'time'}).text.strip()
+            time = datetime.strptime(time, '%M:%S')
+            seconds = timedelta(seconds=time.second, minutes=time.minute).seconds
+            track = {
+                'tracknum': tracknum,
+                'title': title,
+                'composer': composer,
+                'performer': performer,
+                'duration': seconds,
+            }
+            tracks.append(track)
+        return tracks
     @property
     def user_ratings(self):
         user_ratings_div = self.soup.find('ul', {"class": RATINGS})

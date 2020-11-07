@@ -20,12 +20,16 @@ class AlbumReview:
         rating = re.search('([0-9])', rating_class).group(1)
         return rating
 
+    @property
+    def content(self):
+        return self.soup.find('div', {'class': 'middle'}).text.strip()
 
     def json(self):
         return {
             'name': self.name,
             'date': self.date,
             'rating': self.rating,
+            'content': self.content
         }
 
 
