@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 
 from models.album_review import AlbumReview
 from models.constants import BASE_URL, USER_REVIEWS
-from models.soup_loader import SoupLoader
 from utils import make_request
 
 
