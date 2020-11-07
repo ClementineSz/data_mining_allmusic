@@ -5,6 +5,10 @@ from models.album_details import AlbumDetails
 from models.constants import ALBUM
 from models.soup_manager import SoupManager
 
+AUTHOR = "author"
+
+HEADLINE_REVIEW = "headline-review"
+
 IMAGE_CONTAINER = "image-container"
 LABELS = "labels"
 GENRES = "genres"
@@ -43,6 +47,13 @@ class Album:
         endpoint = self.soup.find('div', {"class": IMAGE_CONTAINER}).a['href'].strip()
         return re.search('(mw.*)', endpoint).group(1)
 
+    @property
+    def headline_review(self):
+        headline_div = self.soup.find('div', {"class": HEADLINE_REVIEW})
+        return {'author': headline_div.find('div', {"class": AUTHOR}).text.strip(' -'),
+                'content': headline_div.text.strip(),
+                }
+
     def json(self):
         return {
             'id': self.id,
@@ -51,8 +62,8 @@ class Album:
             'genre': self.genre,
             'label': self.label,
             'details_url': self.details_url,
-            'details': self.details.json()
+            'details': self.details.json(),
+            'headline_review': self.headline_review
         }
-
 
 

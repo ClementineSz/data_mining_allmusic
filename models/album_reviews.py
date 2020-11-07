@@ -7,10 +7,10 @@ from models.soup_manager import SoupManager
 from utils import make_request
 
 
-class AlbumReviews(SoupLoader):
+class AlbumReviews:
     def __init__(self, details):
         self.details = details
-        super().__init__(self.details.album.details_url)
+        self.soup = self.load_soup()
 
     def load_soup(self):
         url = BASE_URL + self.details.review_url
