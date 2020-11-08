@@ -34,7 +34,6 @@ class AlbumDetails:
         seconds = timedelta(seconds=time.second, minutes=time.minute).seconds
         return seconds
 
-
     @property
     @soup_extractor
     def genre(self):
