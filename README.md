@@ -25,7 +25,7 @@ That's why we created a class Album, a class Details, a class Reviews, a class R
 The relation between some of them is composition. It means that an album has details and credits. Album details has reviews and Reviews has review
 
 Extracting html:
-For extracting the html code, we used Beautiful Soup on 3 different url. For two of them it was get query and for one it was get query. 
+For extracting the html code, we used Beautiful Soup on 3 different url. For two of them it was get query and for one it was post query. 
 Also, in one of our request, we had to add some request header and form data to make it to work in addition to make it a post.
 
 
