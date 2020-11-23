@@ -2,13 +2,9 @@ from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 import re
-from models.album_reviews import AlbumReviews
-from models.constants import BASE_URL, NEW_RELEASES, ALBUM, FETCH_REVIEW
-from utils import make_request, soup_extractor
-
-USER_RATING_COUNT = "average-user-rating-count"
-
-RATINGS = "ratings"
+from scraping.album_reviews import AlbumReviews
+from scraping.config import BASE_URL, NEW_RELEASES_ENDPOINT, ALBUM_ENDPOINT, FETCH_REVIEW_ENDPOINT
+from utils import request, soup_extractor
 
 
 class AlbumDetails:
@@ -19,7 +15,7 @@ class AlbumDetails:
 
     def load_soup(self):
         url = BASE_URL + self.album.details_url
-        response = make_request(url)
+        response = request(url)
         return BeautifulSoup(response.text, 'html.parser')
 
     @property
@@ -41,7 +37,7 @@ class AlbumDetails:
 
     @property
     def review_url(self):
-        return ALBUM + FETCH_REVIEW + self.album.id
+        return ALBUM_ENDPOINT + FETCH_REVIEW_ENDPOINT + self.album.id
 
     @property
     @soup_extractor
@@ -95,15 +91,16 @@ class AlbumDetails:
             }
             tracks.append(track)
         return tracks
+
     @property
     @soup_extractor
     def user_ratings(self):
         user_ratings_div = self.soup.find('ul', {"class": RATINGS})
         classes = self.soup.find('ul', {"class": "ratings"}).find('div', {"class": "average-user-rating"})['class']
-        #rating_class = classes[-1]
+        # rating_class = classes[-1]
         return {
             'number': user_ratings_div.find('span', {"class": USER_RATING_COUNT}).contents[0],
-            #'ratings' : re.search('([0-9])', rating_class).group(1)
+            # 'ratings' : re.search('([0-9])', rating_class).group(1)
         }
 
     def json(self):

@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 
-from models.album_review import AlbumReview
-from models.constants import BASE_URL, USER_REVIEWS
-from utils import make_request
+from scraping.album_review import AlbumReview
+from scraping.config import BASE_URL, USER_REVIEWS_ENDPOINT
+from utils import request
 
 
 class AlbumReviews:
@@ -16,9 +16,9 @@ class AlbumReviews:
             'title': self.details.album.title
         }
         headers = {
-            'referer': BASE_URL + self.details.album.details_url + USER_REVIEWS
+            'referer': BASE_URL + self.details.album.details_url + USER_REVIEWS_ENDPOINT
         }
-        response = make_request(url, headers=headers, data=data, post=True)
+        response = request(url, headers=headers, data=data, post=True)
         return BeautifulSoup(response.text, 'html.parser')
 
     def __getitem__(self, index):

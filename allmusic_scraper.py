@@ -1,16 +1,16 @@
 from bs4 import BeautifulSoup
 
 import utils
-from models.album import Album
-from models.constants import BASE_URL, NEW_RELEASES
+from scraping.album import Album
+from scraping.config import BASE_URL, NEW_RELEASES_ENDPOINT
 
 
 def get_new_albums():
     """
 
     """
-    url = BASE_URL + NEW_RELEASES
-    response = utils.make_request(url)
+    url = BASE_URL + NEW_RELEASES_ENDPOINT
+    response = utils.request(url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     # Extract all new features from the html

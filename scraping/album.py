@@ -1,20 +1,11 @@
 import json
 import re
 
-from models.album_credits import AlbumCredits
-from models.album_details import AlbumDetails
-from models.constants import ALBUM
+from scraping.album_credits import AlbumCredits
+from scraping.album_details import AlbumDetails
+from scraping.config import ALBUM_ENDPOINT
 from utils import soup_extractor
 
-AUTHOR = "author"
-
-HEADLINE_REVIEW = "headline-review"
-
-IMAGE_CONTAINER = "image-container"
-LABELS = "labels"
-GENRES = "genres"
-ARTIST = "artist"
-TITLE = "title"
 
 
 class Album:

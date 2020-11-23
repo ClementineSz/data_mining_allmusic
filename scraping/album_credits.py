@@ -1,9 +1,8 @@
 from bs4 import BeautifulSoup
 
-from models.constants import BASE_URL, ALBUM, CREDITS
-from utils import make_request
+from scraping.config import BASE_URL, ALBUM_ENDPOINT, CREDITS_ENDPOINT, CREDITS_CLASS
+from utils import request
 
-CREDITS_ = "credits"
 
 
 class AlbumCredits:
@@ -12,14 +11,14 @@ class AlbumCredits:
         self.soup = self.load_soup()
 
     def load_soup(self):
-        url = BASE_URL + self.album.details_url + CREDITS
+        url = BASE_URL + self.album.details_url + CREDITS_ENDPOINT
         print(url)
-        response = make_request(url)
+        response = request(url)
         return BeautifulSoup(response.text, 'html.parser')
 
     @property
     def credits(self):
-        section_credits = self.soup.find('section', {"class": CREDITS_})
+        section_credits = self.soup.find('section', {"class": CREDITS_CLASS})
         section_credits_tr = section_credits.find_all('tr')
         credits_list = []
         for tr in section_credits_tr:
