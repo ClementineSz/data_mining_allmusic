@@ -63,7 +63,7 @@ class Credits(Base):
     role = Column(String)
 
 
-class Review_Body(Base):
+class ReviewBody(Base):
     __tablename__ = 'review_body'
 
     album_id = Column(Integer, ForeignKey('album.id'))
@@ -79,23 +79,38 @@ class Moods(Base):
     albums = relationship("Album", secondary='link')
 
 
-class Mood_Album(Base):
+class MoodAlbum(Base):
     __tablename__ = 'mood_album'
 
-    album_id = Column(Integer,ForeignKey('album.id'),primary_key = True)
-    mood_id = Column(Integer, ForeignKey('moods.id'),primary_key = True)
+    album_id = Column(Integer, ForeignKey('album.id'), primary_key=True)
+    mood_id = Column(Integer, ForeignKey('moods.id'), primary_key=True)
 
 
-class Moods(Base):
-    __tablename__ = 'moods'
+class Themes(Base):
+    __tablename__ = 'themes'
 
     id = Column(Integer, primary_key=True)
     description = Column(String)
     albums = relationship("Album", secondary='link')
 
 
-class Mood_Album(Base):
-    __tablename__ = 'mood_album'
+class ThemeAlbum(Base):
+    __tablename__ = 'themes_album'
 
-    album_id = Column(Integer,ForeignKey('album.id'),primary_key = True)
-    mood_id = Column(Integer, ForeignKey('moods.id'),primary_key = True)
+    album_id = Column(Integer, ForeignKey('album.id'), primary_key=True)
+    theme_id = Column(Integer, ForeignKey('themes.id'), primary_key=True)
+
+
+class Styles(Base):
+    __tablename__ = 'styles'
+
+    id = Column(Integer, primary_key=True)
+    description = Column(String)
+    albums = relationship("Album", secondary='link')
+
+
+class StylesAlbum(Base):
+    __tablename__ = 'styles_album'
+
+    album_id = Column(Integer, ForeignKey('album.id'), primary_key=True)
+    style_id = Column(Integer, ForeignKey('styles.id'), primary_key=True)
