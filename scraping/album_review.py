@@ -1,6 +1,7 @@
 import re
 
-from scraping.config import DATA_CLASS, PROFILE_USER_RATING_CLASS, MIDDLE_CLASS
+from scraping.config import HtmlTags, HtmlClasses, Patterns
+from scraping.utils import protected_from_attribue_error
 
 
 class AlbumReview:
@@ -8,23 +9,27 @@ class AlbumReview:
         self.soup = soup
 
     @property
+    @protected_from_attribue_error
     def name(self):
-        return self.soup.find('div', {"class": DATA_CLASS}).find_all('p')[0].text.strip()
+        return self.soup.find(HtmlTags.DIV, {"class": HtmlClasses.DATA}).find_all(HtmlTags.P)[0].text.strip()
 
     @property
+    @protected_from_attribue_error
     def date(self):
-        return self.soup.find('div', {"class": DATA_CLASS}).find_all('p')[1].text.strip()
+        return self.soup.find(HtmlTags.DIV, {"class": HtmlClasses.DATA}).find_all(HtmlTags.P)[1].text.strip()
 
     @property
+    @protected_from_attribue_error
     def rating(self):
-        classes = self.soup.find('div', {"class": DATA_CLASS}).find('div', {"class": PROFILE_USER_RATING_CLASS})['class']
+        classes = self.soup.find(HtmlTags.DIV, {"class": HtmlClasses.DATA}).find(HtmlTags.DIV, {"class": HtmlClasses.PROFILE_USER_RATING})['class']
         rating_class = classes[-1]
-        rating = re.search('([0-9])', rating_class).group(1)
+        rating = re.search(Patterns.REVIEW_RATING, rating_class).group(1)
         return rating
 
     @property
+    @protected_from_attribue_error
     def content(self):
-        return self.soup.find('div', {'class': MIDDLE_CLASS}).text.strip()
+        return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.MIDDLE}).text.strip()
 
     def json(self):
         return {

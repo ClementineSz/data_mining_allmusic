@@ -1,21 +1,55 @@
-BASE_URL = 'https://www.allmusic.com'
-NEW_RELEASES_ENDPOINT = 'newreleases'
-ALBUM_ENDPOINT = 'album'
-FETCH_REVIEW_ENDPOINT = 'fetch_review_view'
-USER_REVIEWS_ENDPOINT = 'user-reviews'
-CREDITS_ENDPOINT = 'credits'
+class Endpoints:
+    BASE = 'https://www.allmusic.com'
+    NEW_RELEASES = 'newreleases'
+    ALBUM = 'album'
+    REVIEW = 'fetch_review_view'
+    USER_REVIEWS = 'user-reviews'
+    CREDITS = 'credits'
 
-MIDDLE_CLASS = 'middle'
-DATA_CLASS = "data"
-PROFILE_USER_RATING_CLASS = "profile-user-rating"
-USER_RATING_COUNT_CLASS = "average-user-rating-count"
-RATINGS_CLASS = "ratings"
-CREDITS_CLASS = "credits"
-AUTHOR_CLASS = "author"
-HEADLINE_REVIEW_CLASS = "headline-review"
-IMAGE_CONTAINER_CLASS = "image-container"
-LABELS_CLASS = "labels"
-GENRES_CLASS = "genres"
-ARTIST_CLASS = "artist"
-TITLE_CLASS = "title"
 
+class HtmlClasses:
+    CREDIT = 'credit'
+    AVERAGE_USER_RATING = "average-user-rating"
+    USER_REVIEW = "user_review"
+    GENRE = 'genre'
+    DURATION = 'duration'
+    MIDDLE = 'middle'
+    DATA = "data"
+    PROFILE_USER_RATING = "profile-user-rating"
+    USER_RATING_COUNT = "average-user-rating-count"
+    RATINGS = "ratings"
+    CREDITS = "credits"
+    AUTHOR = "author"
+    HEADLINE_REVIEW = "headline-review"
+    IMAGE = "image-container"
+    LABELS = "labels"
+    GENRES = "genres"
+    ARTIST = "artist"
+    TITLE = "title"
+    TIME = 'time'
+    PERFORMER = 'performer'
+    COMPOSER = 'composer'
+    TRACKNUM = 'tracknum'
+    TRACK = "track"
+    REVIEW_BODY = 'reviewBody'
+    THEME = "theme"
+    THEMES = "themes"
+    MOOD = "mood"
+    MOODS = "moods"
+    STYLES = "styles"
+
+
+class HtmlTags:
+    P = 'p'
+    UL = 'ul'
+    SPAN = 'span'
+    A = 'a'
+    SECTION = 'section'
+    DIV = 'div'
+    TD = 'td'
+    TR = 'tr'
+
+
+class Patterns:
+    REFERENCE_NUMBER = '.*-(.*)'
+    REVIEW_RATING = '([0-9])'

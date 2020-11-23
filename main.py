@@ -1,4 +1,4 @@
-from allmusic_scraper import get_new_albums
+from scraping.allmusic_scraper import get_new_albums
 
 
 def main():
