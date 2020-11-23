@@ -12,7 +12,7 @@ class AlbumCredits:
         self.soup = self.load_soup()
 
     def load_soup(self):
-        url = request_manager.get_formatted_url(Endpoints.BASE, self.album.details_url, Endpoints.CREDITS)
+        url = request_manager.create_url(Endpoints.BASE, self.album.details_url, Endpoints.CREDITS)
         response = fetch(url)
         return BeautifulSoup(response.text, 'html.parser')
 

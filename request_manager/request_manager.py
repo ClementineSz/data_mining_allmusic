@@ -13,5 +13,5 @@ def fetch(url, data=None, post=False, headers=None):
     return requests.get(url, headers=request_headers, data=data)
 
 
-def get_formatted_url(*args):
+def create_url(*args):
     return '/'.join(args)

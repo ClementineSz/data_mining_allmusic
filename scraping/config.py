@@ -2,12 +2,13 @@ class Endpoints:
     BASE = 'https://www.allmusic.com'
     NEW_RELEASES = 'newreleases'
     ALBUM = 'album'
-    REVIEW = 'fetch_review_view'
+    FETCH_REVIEW_VIEW = 'fetch_review_view'
     USER_REVIEWS = 'user-reviews'
     CREDITS = 'credits'
 
 
 class HtmlClasses:
+    NEW_RELEASE = 'new-release'
     CREDIT = 'credit'
     AVERAGE_USER_RATING = "average-user-rating"
     USER_REVIEW = "user_review"

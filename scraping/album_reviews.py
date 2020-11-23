@@ -14,8 +14,8 @@ class AlbumReviews:
 
     def load_soup(self):
         data = {'title': self.details.album.title}
-        headers = {'referer': Endpoints.BASE + self.details.album.details_url + Endpoints.USER_REVIEWS}
-        url = request_manager.get_formatted_url(Endpoints.BASE, self.details.review_url)
+        headers = {'referer': request_manager.create_url(Endpoints.BASE, self.details.album.details_url, Endpoints.USER_REVIEWS)}
+        url = request_manager.create_url(Endpoints.BASE, self.details.review_url)
 
         response = request_manager.fetch(url, headers=headers, data=data, post=True)
 

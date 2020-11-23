@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 
+from request_manager import request_manager
 from request_manager.request_manager import fetch
 from scraping.album_reviews import AlbumReviews
 from scraping.config import Endpoints, HtmlTags, HtmlClasses
@@ -39,7 +40,7 @@ class AlbumDetails:
 
     @property
     def review_url(self):
-        return Endpoints.ALBUM + Endpoints.REVIEW + self.album.reference_number
+        return request_manager.create_url(Endpoints.ALBUM, Endpoints.FETCH_REVIEW_VIEW, self.album.reference_number)
 
     @property
     @protected_from_attribue_error
