@@ -4,7 +4,7 @@ from scraping.config import HtmlTags, HtmlClasses, Patterns
 from scraping.utils import protected_from_attribue_error
 
 
-class AlbumReview:
+class Review:
     def __init__(self, soup):
         self.soup = soup
 
@@ -30,14 +30,6 @@ class AlbumReview:
     @protected_from_attribue_error
     def content(self):
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.MIDDLE}).text.strip()
-
-    def json(self):
-        return {
-            'name': self.name,
-            'date': self.date,
-            'rating': self.rating,
-            'content': self.content
-        }
 
 
 

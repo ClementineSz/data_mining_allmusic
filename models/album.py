@@ -10,8 +10,8 @@ Base = declarative_base()
 class Album(Base):
     __tablename__ = 'albums'
 
-    id = Column(Integer, primary_key=True)
-    ref_number = Column(Integer)
+    id = Column(Integer, primary_key=True,  autoincrement=True)
+    reference_number = Column(Integer)
     title = Column(String)
     artist_id = Column(Integer, ForeignKey('artist.id'))
     label_id = Column(Integer, ForeignKey('label.id'))
@@ -26,7 +26,7 @@ class Album(Base):
 class Artist(Base):
     __tablename__ = 'artist'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
 
 

@@ -4,16 +4,15 @@ from bs4 import BeautifulSoup
 
 from request_manager import request_manager
 from request_manager.request_manager import fetch
-from scraping.album_reviews import AlbumReviews
+from scraping.reviews import Reviews
 from scraping.config import Endpoints, HtmlTags, HtmlClasses
 from scraping.utils import protected_from_attribue_error
 
 
-
-class AlbumDetails:
+class Details:
     def __init__(self, album):
         self.album = album
-        self.reviews = AlbumReviews(self)
+        self.reviews = Reviews(self)
         self.soup = self.load_soup()
 
     def load_soup(self):
@@ -99,23 +98,10 @@ class AlbumDetails:
     @protected_from_attribue_error
     def user_ratings(self):
         user_ratings_div = self.soup.find(HtmlTags.UL, {"class": HtmlClasses.RATINGS})
-        classes = self.soup.find(HtmlTags.UL, {"class": HtmlClasses.RATINGS}).find(HtmlTags.DIV, {"class": HtmlClasses.AVERAGE_USER_RATING})['class']
+        classes = self.soup.find(HtmlTags.UL, {"class": HtmlClasses.RATINGS}).find(HtmlTags.DIV, {
+            "class": HtmlClasses.AVERAGE_USER_RATING})['class']
         # rating_class = classes[-1]
         return {
             'number': user_ratings_div.find('span', {"class": HtmlClasses.USER_RATING_COUNT}).contents[0],
             # 'ratings' : re.search('([0-9])', rating_class).group(1)
-        }
-
-    def json(self):
-        return {
-            'track_listing': self.track_listing,
-            'review_body': self.review_body,
-            'themes': self.themes,
-            'moods': self.moods,
-            'styles': self.styles,
-            'duration': self.duration,
-            'genre': self.genre,
-            'review_url': self.review_url,
-            'reviews': self.reviews.json(),
-            'user_ratings': self.user_ratings
         }

@@ -1,8 +1,9 @@
 import re
 
-from scraping.album_credits import AlbumCredits
-from scraping.album_details import AlbumDetails
+from scraping.credits import Credits
+from scraping.details import Details
 from scraping.config import HtmlTags, HtmlClasses, Patterns
+from scraping.headline import Headline
 
 from scraping.utils import protected_from_attribue_error
 
@@ -10,8 +11,8 @@ from scraping.utils import protected_from_attribue_error
 class Album:
     def __init__(self, soup):
         self.soup = soup
-        self.details = AlbumDetails(self)
-        self.credits = AlbumCredits(self)
+        self.details = Details(self)
+        self.credits = Credits(self)
 
     @property
     @protected_from_attribue_error
@@ -46,20 +47,5 @@ class Album:
     @protected_from_attribue_error
     def headline_review(self):
         headline_div = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.HEADLINE_REVIEW})
-        return {
-            'author': headline_div.find(HtmlTags.DIV, {'class': HtmlClasses.AUTHOR}).text.strip('\n -'),
-            'content': headline_div.find(text=True, recursive=False).strip(),
-        }
+        return Headline(headline_div)
 
-    def json(self):
-        return {
-            'reference_number': self.reference_number,
-            'title': self.title,
-            'artist': self.artist,
-            'genre': self.genre,
-            'label': self.label,
-            'details_url': self.details_url,
-            'details': self.details.json(),
-            'headline_review': self.headline_review,
-            'credits': self.credits.json()
-        }

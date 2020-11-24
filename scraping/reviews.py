@@ -2,12 +2,12 @@ from bs4 import BeautifulSoup
 
 from request_manager import request_manager
 from request_manager.request_manager import fetch
-from scraping.album_review import AlbumReview
+from scraping.review import Review
 from scraping.config import Endpoints, HtmlTags, HtmlClasses
 from scraping.utils import protected_from_attribue_error
 
 
-class AlbumReviews:
+class Reviews:
     def __init__(self, details):
         self.details = details
         self.soup = self.load_soup()
@@ -28,9 +28,9 @@ class AlbumReviews:
     @protected_from_attribue_error
     def reviews(self):
         reviews_div = self.soup.find_all(HtmlTags.DIV, {"class": HtmlClasses.USER_REVIEW})
-        reviews = [AlbumReview(review_div) for review_div in reviews_div]
+        reviews = [Review(review_div) for review_div in reviews_div]
         return reviews
 
-    def json(self):
-        return [review.json() for review in self.reviews]
+    def __iter__(self):
+        return self.reviews.__iter__()
 

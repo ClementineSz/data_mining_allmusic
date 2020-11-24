@@ -6,7 +6,7 @@ from scraping.config import Endpoints, HtmlClasses, HtmlTags
 from scraping.utils import protected_from_attribue_error
 
 
-class AlbumCredits:
+class Credits:
     def __init__(self, album):
         self.album = album
         self.soup = self.load_soup()
@@ -32,5 +32,3 @@ class AlbumCredits:
             credits_list.append(credit)
         return credits_list
 
-    def json(self):
-        return self.credits
