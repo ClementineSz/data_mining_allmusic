@@ -47,5 +47,6 @@ def test_album_model():
 def test_create_table():
     create_tables()
 
+
 def test_drop_table():
     drop_tables()

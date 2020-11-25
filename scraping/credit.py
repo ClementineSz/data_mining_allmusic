@@ -14,4 +14,11 @@ class Credit:
     @property
     @protected_from_attribue_error
     def role(self):
-        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.CREDIT}).text.strip()
+        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.CREDIT}).text.strip()\
+
+
+    @property
+    @protected_from_attribue_error
+    def composer(self):
+        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.COMPOSER}).text.strip()
+
