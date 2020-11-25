@@ -1,1 +1,1 @@
-SQL_URL=''
+SQL_URL = 'sqlite:///albums.db'

@@ -6,6 +6,7 @@ from request_manager import request_manager
 from request_manager.request_manager import fetch
 from scraping.reviews import Reviews
 from scraping.config import Endpoints, HtmlTags, HtmlClasses
+from scraping.track import Track
 from scraping.utils import protected_from_attribue_error
 
 
@@ -69,29 +70,9 @@ class Details:
 
     @property
     @protected_from_attribue_error
-    def track_listing(self):
+    def tracks(self):
         track_listing_divs = self.soup.find_all(HtmlTags.TR, {"class": HtmlClasses.TRACK})
-        tracks = []
-        for track_listing_div in track_listing_divs:
-            tracknum = track_listing_div.find(HtmlTags.TD, {'class': HtmlClasses.TRACKNUM}).text.strip()
-            title = track_listing_div.find(HtmlTags.DIV, {'class': HtmlClasses.TITLE}).text.strip()
-            composer = track_listing_div.find(HtmlTags.DIV, {'class': HtmlClasses.COMPOSER}).text.strip()
-            performer = track_listing_div.find(HtmlTags.TD, {'class': HtmlClasses.PERFORMER}).text.strip()
-            try:
-                time_string = track_listing_div.find(HtmlTags.TD, {'class': HtmlClasses.TIME}).text.strip()
-                time = datetime.strptime(time_string, '%M:%S')
-                seconds = timedelta(seconds=time.second, minutes=time.minute).seconds
-
-            except ValueError:
-                seconds = None
-            track = {
-                'tracknum': tracknum,
-                'title': title,
-                'composer': composer,
-                'performer': performer,
-                'duration': seconds,
-            }
-            tracks.append(track)
+        tracks = [Track(track_div) for track_div in track_listing_divs]
         return tracks
 
     @property

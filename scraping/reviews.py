@@ -24,7 +24,6 @@ class Reviews:
     def __getitem__(self, index):
         return self.reviews[index]
 
-    @property
     @protected_from_attribue_error
     def reviews(self):
         reviews_div = self.soup.find_all(HtmlTags.DIV, {"class": HtmlClasses.USER_REVIEW})
@@ -32,5 +31,5 @@ class Reviews:
         return reviews
 
     def __iter__(self):
-        return self.reviews.__iter__()
+        return self.reviews().__iter__()
 

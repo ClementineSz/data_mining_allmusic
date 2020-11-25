@@ -1,4 +1,5 @@
 import re
+from dateutil.parser import parse
 
 from scraping.config import HtmlTags, HtmlClasses, Patterns
 from scraping.utils import protected_from_attribue_error
@@ -10,13 +11,14 @@ class Review:
 
     @property
     @protected_from_attribue_error
-    def name(self):
+    def author(self):
         return self.soup.find(HtmlTags.DIV, {"class": HtmlClasses.DATA}).find_all(HtmlTags.P)[0].text.strip()
 
     @property
     @protected_from_attribue_error
     def date(self):
-        return self.soup.find(HtmlTags.DIV, {"class": HtmlClasses.DATA}).find_all(HtmlTags.P)[1].text.strip()
+        string_date = self.soup.find(HtmlTags.DIV, {"class": HtmlClasses.DATA}).find_all(HtmlTags.P)[1].text.strip()
+        return parse(string_date)
 
     @property
     @protected_from_attribue_error
