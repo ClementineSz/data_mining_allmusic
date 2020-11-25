@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 from database.config import SQL_URL
 from models import album
-from models.album import Album, Artist, Label, Style, Mood, Theme, Track, ReviewBody, Base
+from models.album import Album, Artist, Label, Style, Mood, Theme, Track, ReviewBody, Base, Genre
 from scraping.album import Album
 
 logger = logging.getLogger('database_manager')
@@ -65,7 +65,7 @@ def insert(albums: List[Album]):
         styles = [Style(description=style) for style in album.details.styles]
         moods = [Mood(description=mood) for mood in album.details.moods]
         themes = [Theme(description=theme) for theme in album.details.themes]
-        genres = [Theme(description=genre) for genre in album.details.genre]
+        genre = Genre(description=album.details.genre)
         tracks = [Track(title=track.get('title'), duration=track.get('duration')) for track in
                   album.details.track_listing]
         review_body = ReviewBody(content=album.details.review_body)
@@ -73,6 +73,7 @@ def insert(albums: List[Album]):
                                  title=album.title,
                                  artist=artist,
                                  label=label,
+                                 genre=genre,
                                  headline_review_author=album.headline_review.author)
         session.add(model_album)
         session.commit()
