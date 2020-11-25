@@ -1,5 +1,3 @@
-import unittest
-
 from database.database_manager import sql_session, create_tables, drop_tables
 from models.album import Album as ModelAlbum, Artist, Label, Mood, Theme, Style, Track, ReviewBody, Genre, Review, \
     Credit
@@ -17,7 +15,7 @@ def test_album_model():
     styles = [Style(description=style) for style in album.details.styles]
     moods = [Mood(description=mood) for mood in album.details.moods]
     themes = [Theme(description=theme) for theme in album.details.themes]
-    genres = [Genre(description=genre) for genre in album.details.genre]
+    genre = Genre(description=album.details.genre)
     tracks = [Track(title=track.title, duration=track.duration) for track in
               album.details.tracks]
 
@@ -35,7 +33,7 @@ def test_album_model():
                              moods=moods,
                              styles=styles,
                              themes=themes,
-                             genres=genres)
+                             genre=genre)
     model_album.reviews = reviews
     model_album.tracks = tracks
     model_album.credits = credits
