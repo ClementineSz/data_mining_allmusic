@@ -1,1 +1,1 @@
-SQL_URL = 'sqlite:///albums.db'
+SQL_URL = 'mysql+mysqlconnector://root:????@localhost/dballmusic'

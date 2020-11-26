@@ -19,12 +19,13 @@ def test_album_model():
     themes = [get_or_create(session, Theme, description=theme) for theme in album.details.themes]
     genre = get_or_create(session, Genre, description=album.details.genre)
 
+
     tracks = []
     for track in album.details.tracks:
         track_model = get_or_create(session, Track, title=track.title)
-        composer = get_or_create(session, Artist, name=track.composer)
+        composers = [get_or_create(session, Artist, name=composer) for composer in track.composers]
         track_model.duration = track.duration
-        track_model.composer = composer
+        track_model.composers = composers
         tracks.append(track_model)
 
     reviews = [get_or_create(session, Review, content=review.content, author=review.author, date=review.date) for review

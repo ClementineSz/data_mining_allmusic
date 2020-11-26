@@ -4,6 +4,7 @@ from typing import List
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import database_exists, create_database
 
 from database.config import SQL_URL
 from models import album
@@ -26,9 +27,23 @@ def get_or_create(session, model, **kwargs):
         return instance
 
 
+def get_engine():
+    return create_engine(SQL_URL, echo=True)
+
+
+def create_databse():
+    engine = get_engine()
+    if not database_exists(engine.url):
+        create_database(engine.url)
+
+
 def create_tables():
-    engine = create_engine(SQL_URL, echo=True)
+    engine = get_engine()
     Base.metadata.create_all(engine)
+
+   # engine = create_engine('mysql+mysqlconnector://root:?????????@localhost/dballmusic')
+
+
 
 
 def drop_tables():

@@ -43,6 +43,13 @@ class ThemeAlbum(Base):
     theme_id = Column(Integer, ForeignKey('theme.id'), primary_key=True)
 
 
+class ComposerTrack(Base):
+    __tablename__ = 'composer_track'
+
+    track_id = Column(Integer, ForeignKey('track.id'), primary_key=True)
+    composer_id = Column(Integer, ForeignKey('artist.id'), primary_key=True)
+
+
 class Track(Base):
     __tablename__ = 'track'
 
