@@ -13,21 +13,14 @@ class Track:
     @to_title
     @strip
     def title(self):
-        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.TRACKNUM}).text.strip()
+        return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.TITLE}).text
 
     @property
     @protected_from_attribue_error
     @to_title
     @strip
-    def composer(self):
-        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.COMPOSER}).text.strip()
-
-    @property
-    @protected_from_attribue_error
-    @to_title
-    @strip
-    def performer(self):
-        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.PERFORMER}).text.strip()
+    def composers(self):
+        return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.COMPOSER}).text.split('/')
 
     @property
     @protected_from_attribue_error

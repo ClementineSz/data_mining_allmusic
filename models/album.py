@@ -53,11 +53,8 @@ class Track(Base):
     album_id = Column(Integer, ForeignKey('album.id'))
     album = relationship('Album', back_populates='tracks')
 
-    performer_id = Column(Integer, ForeignKey('artist.id'))
-    performer = relationship('Artist', back_populates='tracks', foreign_keys=[performer_id])
-
     composer_id = Column(Integer, ForeignKey('artist.id'))
-    composer = relationship('Artist', back_populates='tracks', foreign_keys=[composer_id])
+    composer = relationship('Artist', back_populates='tracks')
 
 
 class Credit(Base):
@@ -67,7 +64,7 @@ class Credit(Base):
 
     album_id = Column(Integer, ForeignKey('album.id'))
     artist_id = Column(Integer, ForeignKey('artist.id'))
-    role_name = Column(String, ForeignKey('role.name'))
+    role_id = Column(Integer, ForeignKey('role.id'))
 
     role = relationship('Role', back_populates='credits')
     album = relationship('Album', back_populates='credits')
@@ -124,7 +121,7 @@ class Artist(Base):
     name = Column(String)
     albums = relationship("Album", back_populates="artist")
     credits = relationship('Credit', back_populates='artist')
-    tracks = relationship('Track', back_populates='artist', primaryjoin="Artist.id==Track.performer_id")
+    tracks = relationship('Track', back_populates='composer')
     __table_args__ = (UniqueConstraint('name'),)
 
 

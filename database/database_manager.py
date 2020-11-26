@@ -26,11 +26,6 @@ def get_or_create(session, model, **kwargs):
         return instance
 
 
-def refresh_tables():
-    drop_tables()
-    create_tables()
-
-
 def create_tables():
     engine = create_engine(SQL_URL, echo=True)
     Base.metadata.create_all(engine)

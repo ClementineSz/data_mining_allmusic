@@ -1,4 +1,4 @@
-from database.database_manager import sql_session, create_tables, drop_tables, get_or_create, refresh_tables
+from database.database_manager import sql_session, create_tables, drop_tables, get_or_create
 from models.album import Album as ModelAlbum, Artist, Label, Mood, Theme, Style, Track, ReviewBody, Genre, Review, \
     Credit, Role
 from scraping.album import Album as ScrapingAlbum
@@ -23,10 +23,8 @@ def test_album_model():
     for track in album.details.tracks:
         track_model = get_or_create(session, Track, title=track.title)
         composer = get_or_create(session, Artist, name=track.composer)
-        performer = get_or_create(session, Artist, name=track.performer)
         track_model.duration = track.duration
         track_model.composer = composer
-        track_model.performer = performer
         tracks.append(track_model)
 
     reviews = [get_or_create(session, Review, content=review.content, author=review.author, date=review.date) for review
@@ -70,4 +68,11 @@ def test_drop_table():
 
 
 def test_refresh_tables():
-    refresh_tables()
+    create_tables()
+    drop_tables()
+
+
+def test_refresh_and_insert():
+    drop_tables()
+    create_tables()
+    test_album_model()
