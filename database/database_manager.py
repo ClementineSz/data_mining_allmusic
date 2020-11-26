@@ -15,6 +15,22 @@ handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(handler)
 
 
+def get_or_create(session, model, **kwargs):
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**kwargs)
+        session.add(instance)
+        session.commit()
+        return instance
+
+
+def refresh_tables():
+    drop_tables()
+    create_tables()
+
+
 def create_tables():
     engine = create_engine(SQL_URL, echo=True)
     Base.metadata.create_all(engine)
@@ -37,30 +53,11 @@ def sql_engine():
     return engine
 
 
-def get_label_id(album_label_name, session):
-    label = session.query(Label).filter_by(name=album_label_name).first()
-    if not label:
-        label_to_insert = Label(name=album_label_name)
-        session.add(label_to_insert)
-    return session.query(Label).filter_by(name=album_label_name).first().id
-
-
-def get_artist_id(album_artist_name, session):
-    artist = session.query(Artist).filter_by(name=album_artist_name).first()
-    if artist:
-        return artist.id
-
-    artist_to_insert = Artist(name=album_artist_name)
-    session.add(artist_to_insert)
-    # retrieve id from add
-    return session.query(Artist).filter_by(name=album_artist_name).first().id
-
-
 def insert(albums: List[Album]):
     session = sql_session()
     album_models = []
     for album in albums:
-        artist = Artist(name=album.artist.name)
+        artist = get_or_create(session, Artist, name=album.artist_name.name)
         label = Label(name=album.label.name)
         styles = [Style(description=style) for style in album.details.styles]
         moods = [Mood(description=mood) for mood in album.details.moods]

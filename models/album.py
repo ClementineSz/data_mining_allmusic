@@ -2,7 +2,6 @@ from sqlalchemy import create_engine, ForeignKey, Table, UniqueConstraint
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqlalchemy_utils import database_exists, create_database
 
 Base = declarative_base()
 
@@ -23,8 +22,6 @@ class Review(Base):
     album = relationship("Album", back_populates="reviews")
 
 
-#
-#
 class MoodAlbum(Base):
     __tablename__ = 'mood_album'
 
@@ -32,8 +29,6 @@ class MoodAlbum(Base):
     mood_id = Column(Integer, ForeignKey('mood.id'), primary_key=True)
 
 
-#
-#
 class StyleAlbum(Base):
     __tablename__ = 'style_album'
 
@@ -58,16 +53,33 @@ class Track(Base):
     album_id = Column(Integer, ForeignKey('album.id'))
     album = relationship('Album', back_populates='tracks')
 
+    performer_id = Column(Integer, ForeignKey('artist.id'))
+    performer = relationship('Artist', back_populates='tracks', foreign_keys=[performer_id])
+
+    composer_id = Column(Integer, ForeignKey('artist.id'))
+    composer = relationship('Artist', back_populates='tracks', foreign_keys=[composer_id])
+
 
 class Credit(Base):
     __tablename__ = 'credit'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    album_id = Column(Integer, ForeignKey('album.id'))
-    artist = Column(String)
-    role = Column(String)
 
+    album_id = Column(Integer, ForeignKey('album.id'))
+    artist_id = Column(Integer, ForeignKey('artist.id'))
+    role_name = Column(String, ForeignKey('role.name'))
+
+    role = relationship('Role', back_populates='credits')
     album = relationship('Album', back_populates='credits')
+    artist = relationship('Artist', back_populates='credits')
+
+
+class Role(Base):
+    __tablename__ = 'role'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+    credits = relationship('Credit', back_populates='role')
 
 
 class Album(Base):
@@ -111,7 +123,8 @@ class Artist(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     albums = relationship("Album", back_populates="artist")
-
+    credits = relationship('Credit', back_populates='artist')
+    tracks = relationship('Track', back_populates='artist', primaryjoin="Artist.id==Track.performer_id")
     __table_args__ = (UniqueConstraint('name'),)
 
 

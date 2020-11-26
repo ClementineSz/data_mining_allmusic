@@ -7,7 +7,7 @@ from request_manager.request_manager import fetch
 from scraping.reviews import Reviews
 from scraping.config import Endpoints, HtmlTags, HtmlClasses
 from scraping.track import Track
-from scraping.utils import protected_from_attribue_error
+from scraping.utils import protected_from_attribue_error, to_title, strip
 
 
 class Details:
@@ -35,6 +35,8 @@ class Details:
 
     @property
     @protected_from_attribue_error
+    @to_title
+    @strip
     def genre(self):
         return self.soup.find(HtmlTags.DIV, {"class": HtmlClasses.GENRE}).a.text.strip()
 
@@ -44,6 +46,8 @@ class Details:
 
     @property
     @protected_from_attribue_error
+    @to_title
+    @strip
     def styles(self):
         styles_div = self.soup.find(HtmlTags.DIV, {"class": HtmlClasses.STYLES})
         styles_a = styles_div.find_all(HtmlTags.A)
@@ -51,6 +55,8 @@ class Details:
 
     @property
     @protected_from_attribue_error
+    @to_title
+    @strip
     def moods(self):
         moods_div = self.soup.find(HtmlTags.SECTION, {"class": HtmlClasses.MOODS})
         mood_spans = moods_div.find_all(HtmlTags.SPAN, {"class": HtmlClasses.MOOD})
@@ -58,6 +64,8 @@ class Details:
 
     @property
     @protected_from_attribue_error
+    @to_title
+    @strip
     def themes(self):
         themes_div = self.soup.find(HtmlTags.SECTION, {"class": HtmlClasses.THEMES})
         theme_spans = themes_div.find_all(HtmlTags.SPAN, {"class": HtmlClasses.THEME})

@@ -5,7 +5,7 @@ from scraping.details import Details
 from scraping.config import HtmlTags, HtmlClasses, Patterns
 from scraping.headline import Headline
 
-from scraping.utils import protected_from_attribue_error
+from scraping.utils import protected_from_attribue_error, to_title, strip
 
 
 class Album:
@@ -16,21 +16,23 @@ class Album:
 
     @property
     @protected_from_attribue_error
+    @to_title
+    @strip
     def title(self):
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.TITLE}).text.strip().lower()
 
     @property
     @protected_from_attribue_error
-    def artist(self):
+    @to_title
+    @strip
+    def artist_name(self):
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.ARTIST}).text.strip()
 
-    @property
-    @protected_from_attribue_error
-    def genre(self):
-        return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.GENRES}).text.strip()
 
     @property
     @protected_from_attribue_error
+    @to_title
+    @strip
     def label(self):
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.LABELS}).text.strip()
 

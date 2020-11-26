@@ -1,43 +1,62 @@
-from database.database_manager import sql_session, create_tables, drop_tables
+from database.database_manager import sql_session, create_tables, drop_tables, get_or_create, refresh_tables
 from models.album import Album as ModelAlbum, Artist, Label, Mood, Theme, Style, Track, ReviewBody, Genre, Review, \
-    Credit
+    Credit, Role
 from scraping.album import Album as ScrapingAlbum
 from scraping.allmusic_scraper import get_albums_html
 
 
 def test_album_model():
+    session = sql_session()
+
     albums_html = get_albums_html()
 
     album = ScrapingAlbum(albums_html.pop(0))
 
-    artist = Artist(name=album.artist)
-    label = Label(name=album.label)
-    styles = [Style(description=style) for style in album.details.styles]
-    moods = [Mood(description=mood) for mood in album.details.moods]
-    themes = [Theme(description=theme) for theme in album.details.themes]
-    genre = Genre(description=album.details.genre)
-    tracks = [Track(title=track.title, duration=track.duration) for track in
-              album.details.tracks]
+    artist = get_or_create(session, Artist, name=album.artist_name)
+    label = get_or_create(session, Label, name=album.label)
+    styles = [get_or_create(session, Style, description=style) for style in album.details.styles]
+    moods = [get_or_create(session, Mood, description=mood) for mood in album.details.moods]
+    themes = [get_or_create(session, Theme, description=theme) for theme in album.details.themes]
+    genre = get_or_create(session, Genre, description=album.details.genre)
 
-    reviews = [Review(content=review.content, author=review.author, date=review.date) for review in
+    tracks = []
+    for track in album.details.tracks:
+        track_model = get_or_create(session, Track, title=track.title)
+        composer = get_or_create(session, Artist, name=track.composer)
+        performer = get_or_create(session, Artist, name=track.performer)
+        track_model.duration = track.duration
+        track_model.composer = composer
+        track_model.performer = performer
+        tracks.append(track_model)
+
+    reviews = [get_or_create(session, Review, content=review.content, author=review.author, date=review.date) for review
+               in
                album.details.reviews]
 
-    credits = [Credit(artist=credit.artist, role=credit.role) for credit in album.credits]
-    review_body = ReviewBody(content=album.details.review_body)
-    model_album = ModelAlbum(reference_number=album.reference_number,
-                             review_body=review_body,
-                             title=album.title,
-                             artist=artist,
-                             label=label,
-                             headline_review_author=album.headline_review.author,
-                             moods=moods,
-                             styles=styles,
-                             themes=themes,
-                             genre=genre)
+    credits = []
+    for credit in album.credits:
+        for role in credit.roles:
+            credits.append(
+                get_or_create(session, Credit, artist=get_or_create(session, Artist, name=credit.artist_name),
+                              role=get_or_create(session, Role, name=role)))
+
+    review_body = get_or_create(session, ReviewBody, content=album.details.review_body)
+    model_album = get_or_create(session, ModelAlbum, reference_number=album.reference_number)
+
+    model_album.review_body = review_body
+    model_album.title = album.title
+    model_album.artist = artist
+    model_album.label = label
+    model_album.headline_review_author = album.headline_review.author
+    model_album.headline_review_content = album.headline_review.content
+    model_album.moods = moods
+    model_album.styles = styles
+    model_album.themes = themes
+    model_album.genre = genre
     model_album.reviews = reviews
     model_album.tracks = tracks
     model_album.credits = credits
-    session = sql_session()
+
     session.add(model_album)
     session.commit()
 
@@ -48,3 +67,7 @@ def test_create_table():
 
 def test_drop_table():
     drop_tables()
+
+
+def test_refresh_tables():
+    refresh_tables()
