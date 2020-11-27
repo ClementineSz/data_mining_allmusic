@@ -1,71 +1,69 @@
-from sqlalchemy import create_engine, ForeignKey, Table, UniqueConstraint
-from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Date, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from models.config import TableNames
 
 Base = declarative_base()
 
 
-# https://stackoverflow.com/questions/5756559/how-to-build-many-to-many-relations-using-sqlalchemy-a-good-example
-# https://stackoverflow.com/questions/18022326/sqlalchemy-insert-many-to-one-entries
-
 class Review(Base):
-    __tablename__ = 'review'
+    __tablename__ = TableNames.REVIEW
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     album_id = Column(Integer, ForeignKey('album.id'))
     date = Column(Date)
-    author = Column(String)
+    author = Column(String(255))
     rating = Column(Integer)
-    content = Column(String)
+    content = Column(Text())
 
     album = relationship("Album", back_populates="reviews")
 
 
 class MoodAlbum(Base):
-    __tablename__ = 'mood_album'
+    __tablename__ = TableNames.MOOD_ALBUM
 
     album_id = Column(Integer, ForeignKey('album.id'), primary_key=True)
     mood_id = Column(Integer, ForeignKey('mood.id'), primary_key=True)
 
 
 class StyleAlbum(Base):
-    __tablename__ = 'style_album'
+    __tablename__ = TableNames.STYLE_ALBUM
 
     album_id = Column(Integer, ForeignKey('album.id'), primary_key=True)
     style_id = Column(Integer, ForeignKey('style.id'), primary_key=True)
 
 
 class ThemeAlbum(Base):
-    __tablename__ = 'theme_album'
+    __tablename__ = TableNames.THEME_ALBUM
 
     album_id = Column(Integer, ForeignKey('album.id'), primary_key=True)
     theme_id = Column(Integer, ForeignKey('theme.id'), primary_key=True)
 
 
 class ComposerTrack(Base):
-    __tablename__ = 'composer_track'
+    __tablename__ = TableNames.COMPOSER_TRACK
 
     track_id = Column(Integer, ForeignKey('track.id'), primary_key=True)
     composer_id = Column(Integer, ForeignKey('artist.id'), primary_key=True)
 
 
 class Track(Base):
-    __tablename__ = 'track'
+    __tablename__ = TableNames.TRACK
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String)
+    title = Column(String(255))
     duration = Column(Integer)
 
     album_id = Column(Integer, ForeignKey('album.id'))
     album = relationship('Album', back_populates='tracks')
 
-    composer_id = Column(Integer, ForeignKey('artist.id'))
-    composer = relationship('Artist', back_populates='tracks')
+    composers = relationship("Artist", secondary=ComposerTrack.__tablename__, back_populates="tracks")
+
 
 
 class Credit(Base):
-    __tablename__ = 'credit'
+    __tablename__ = TableNames.CREDIT
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
@@ -79,21 +77,21 @@ class Credit(Base):
 
 
 class Role(Base):
-    __tablename__ = 'role'
+    __tablename__ = TableNames.ROLE
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String(255))
 
     credits = relationship('Credit', back_populates='role')
 
 
 class Album(Base):
-    __tablename__ = 'album'
+    __tablename__ = TableNames.ALBUM
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    reference_number = Column(Integer)
-    title = Column(String)
-    headline_review_author = Column(String)
-    headline_review_content = Column(String)
+    reference_number = Column(String(255))
+    title = Column(String(255))
+    headline_review_author = Column(String(255))
+    headline_review_content = Column(String(255))
 
     artist_id = Column(Integer, ForeignKey('artist.id'))
     label_id = Column(Integer, ForeignKey('label.id'))
@@ -113,6 +111,7 @@ class Album(Base):
     styles = relationship("Style", secondary=StyleAlbum.__tablename__, back_populates="albums")
     themes = relationship("Theme", secondary=ThemeAlbum.__tablename__, back_populates="albums")
 
+
     # Many to one
     reviews = relationship("Review", order_by=Review.id, back_populates="album")
     tracks = relationship("Track", order_by=Track.id, back_populates="album")
@@ -122,69 +121,70 @@ class Album(Base):
 
 
 class Artist(Base):
-    __tablename__ = 'artist'
+    __tablename__ = TableNames.ARTIST
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String(255))
     albums = relationship("Album", back_populates="artist")
     credits = relationship('Credit', back_populates='artist')
-    tracks = relationship('Track', back_populates='composer')
+    tracks = relationship('Track', secondary=ComposerTrack.__tablename__, back_populates='composers')
+
     __table_args__ = (UniqueConstraint('name'),)
 
 
 class Label(Base):
-    __tablename__ = 'label'
+    __tablename__ = TableNames.LABEL
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String(255))
     albums = relationship("Album", back_populates="label")
 
     __table_args__ = (UniqueConstraint('name'),)
 
 
 class ReviewBody(Base):
-    __tablename__ = 'review_body'
+    __tablename__ = TableNames.REVIEW_BODY
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    content = Column(String)
+    content = Column(Text())
     album = relationship("Album", back_populates="review_body")
 
 
 class Mood(Base):
-    __tablename__ = 'mood'
+    __tablename__ = TableNames.MOOD
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    description = Column(String)
+    description = Column(String(255))
     albums = relationship("Album", secondary=MoodAlbum.__tablename__, back_populates='moods')
 
     __table_args__ = (UniqueConstraint('description'),)
 
 
 class Theme(Base):
-    __tablename__ = 'theme'
+    __tablename__ = TableNames.THEME
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    description = Column(String)
+    description = Column(String(255))
     albums = relationship("Album", secondary=ThemeAlbum.__tablename__, back_populates='themes')
 
     __table_args__ = (UniqueConstraint('description'),)
 
 
 class Style(Base):
-    __tablename__ = 'style'
+    __tablename__ = TableNames.STYLE
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    description = Column(String)
+    description = Column(String(255))
     albums = relationship("Album", secondary=StyleAlbum.__tablename__, back_populates='styles')
 
     __table_args__ = (UniqueConstraint('description'),)
 
 
 class Genre(Base):
-    __tablename__ = 'genre'
+    __tablename__ = TableNames.GENRE
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    description = Column(String)
+    description = Column(String(255))
     albums = relationship("Album", back_populates='genre')
 
     __table_args__ = (UniqueConstraint('description'),)

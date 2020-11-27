@@ -17,6 +17,7 @@ class Credits:
         response = fetch(url)
         return BeautifulSoup(response.text, 'html.parser')
 
+    @property
     @protected_from_attribue_error
     def credits(self):
         section_credits = self.soup.find(HtmlTags.SECTION, {'class': HtmlClasses.CREDITS})
@@ -25,4 +26,8 @@ class Credits:
         return credits_list
 
     def __iter__(self):
-        return self.credits().__iter__()
+        credits_to_iterate = []
+        if self.credits:
+            for credit in self.credits:
+                credits_to_iterate.append(credit)
+        return credits_to_iterate.__iter__()

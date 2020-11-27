@@ -11,6 +11,7 @@ class Reviews:
     def __init__(self, details):
         self.details = details
         self.soup = self.load_soup()
+        self._reviews = []
 
     def load_soup(self):
         data = {'title': self.details.album.title}
@@ -24,6 +25,7 @@ class Reviews:
     def __getitem__(self, index):
         return self.reviews[index]
 
+    @property
     @protected_from_attribue_error
     def reviews(self):
         reviews_div = self.soup.find_all(HtmlTags.DIV, {"class": HtmlClasses.USER_REVIEW})
@@ -31,5 +33,9 @@ class Reviews:
         return reviews
 
     def __iter__(self):
-        return self.reviews().__iter__()
+        reviews_to_iterate = []
+        if self.reviews:
+            for credit in self.reviews:
+                reviews_to_iterate.append(credit)
+        return reviews_to_iterate.__iter__()
 

@@ -1,9 +1,17 @@
+import logging
+import sys
+
 from bs4 import BeautifulSoup
 
 import utils
 from request_manager import request_manager
 from scraping.album import Album
 from scraping.config import Endpoints, HtmlClasses, HtmlTags
+
+logger = logging.getLogger('scraper')
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler(sys.stdout)
+logger.addHandler(handler)
 
 
 def get_new_albums():
@@ -16,7 +24,7 @@ def get_new_albums():
     for i, album_div in enumerate(albums_divs):
         album = Album(album_div)
 
-        print(f'[{i}/{len(albums_divs)}] - Finished extracting {album.title}')
+        logger.info(f'[{i}/{len(albums_divs)}] - Finished extracting {album.title}')
 
         albums.append(album)
     return albums
