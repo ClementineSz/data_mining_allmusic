@@ -20,7 +20,12 @@ class Track:
     @to_title
     @strip
     def composers(self):
-        return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.COMPOSER}).text.split('/')
+        composers = []
+        composers_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.COMPOSER}).text
+        if composers_string.strip():
+            for i in composers_string.split('/'):
+                composers.append(i)
+        return composers
 
     @property
     @protected_from_attribue_error

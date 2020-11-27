@@ -41,6 +41,13 @@ class ThemeAlbum(Base):
     theme_id = Column(Integer, ForeignKey('theme.id'), primary_key=True)
 
 
+class ArtistAlbum(Base):
+    __tablename__ = TableNames.ARTIST_ALBUM
+
+    album_id = Column(Integer, ForeignKey('album.id'), primary_key=True)
+    artist_id = Column(Integer, ForeignKey('artist.id'), primary_key=True)
+
+
 class ComposerTrack(Base):
     __tablename__ = TableNames.COMPOSER_TRACK
 
@@ -59,7 +66,6 @@ class Track(Base):
     album = relationship('Album', back_populates='tracks')
 
     composers = relationship("Artist", secondary=ComposerTrack.__tablename__, back_populates="tracks")
-
 
 
 class Credit(Base):
@@ -93,13 +99,11 @@ class Album(Base):
     headline_review_author = Column(String(255))
     headline_review_content = Column(String(255))
 
-    artist_id = Column(Integer, ForeignKey('artist.id'))
     label_id = Column(Integer, ForeignKey('label.id'))
     genre_id = Column(Integer, ForeignKey('genre.id'))
     review_body_id = Column(Integer, ForeignKey('review_body.id'))
 
     # One to Many
-    artist = relationship("Artist", back_populates='albums')
     label = relationship("Label", back_populates='albums')
     genre = relationship("Genre", back_populates="albums")
 
@@ -110,7 +114,7 @@ class Album(Base):
     moods = relationship("Mood", secondary=MoodAlbum.__tablename__, back_populates="albums")
     styles = relationship("Style", secondary=StyleAlbum.__tablename__, back_populates="albums")
     themes = relationship("Theme", secondary=ThemeAlbum.__tablename__, back_populates="albums")
-
+    artists = relationship("Artist", secondary=ArtistAlbum.__tablename__, back_populates='albums')
 
     # Many to one
     reviews = relationship("Review", order_by=Review.id, back_populates="album")
@@ -125,8 +129,9 @@ class Artist(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
-    albums = relationship("Album", back_populates="artist")
     credits = relationship('Credit', back_populates='artist')
+
+    albums = relationship("Album", secondary=ArtistAlbum.__tablename__, back_populates="artists")
     tracks = relationship('Track', secondary=ComposerTrack.__tablename__, back_populates='composers')
 
     __table_args__ = (UniqueConstraint('name'),)

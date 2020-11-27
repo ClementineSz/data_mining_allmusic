@@ -25,7 +25,7 @@ class HtmlClasses:
     IMAGE = "image-container"
     LABELS = "labels"
     GENRES = "genres"
-    ARTIST = "artist"
+    ARTISTS = "artist"
     TITLE = "title"
     TIME = 'time'
     PERFORMER = 'performer'

@@ -11,7 +11,7 @@ class Credit:
     @to_title
     @strip
     def artist_name(self):
-        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.ARTIST}).a.text
+        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.ARTISTS}).a.text
 
     @property
     @protected_from_attribue_error

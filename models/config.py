@@ -13,5 +13,6 @@ class TableNames:
     COMPOSER_TRACK = 'composer_track'
     THEME_ALBUM = 'theme_album'
     STYLE_ALBUM = 'style_album'
+    ARTIST_ALBUM = 'artist_album'
     MOOD_ALBUM = 'mood_album'
     REVIEW = 'review'

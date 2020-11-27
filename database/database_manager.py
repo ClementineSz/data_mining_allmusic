@@ -29,7 +29,6 @@ def get_or_create(session, model, **kwargs):
 
 
 def insert_album(session, album):
-    artist = get_or_create(session, Artist, name=album.artist_name)
     label = get_or_create(session, Label, name=album.label)
     genre = get_or_create(session, Genre, description=album.details.genre)
     review_body = get_or_create(session, ReviewBody, content=album.details.review_body)
@@ -38,10 +37,13 @@ def insert_album(session, album):
 
     model_album.review_body = review_body
     model_album.title = album.title
-    model_album.artist = artist
     model_album.label = label
     model_album.headline_review_author = album.headline_review.author
     model_album.headline_review_content = album.headline_review.content
+
+    if album.artists:
+        artists = [get_or_create(session, Artist, name=artist) for artist in album.artists]
+        model_album.artists = artists
 
     if album.credits:
         credits = []

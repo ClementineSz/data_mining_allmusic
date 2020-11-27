@@ -25,9 +25,13 @@ class Album:
     @protected_from_attribue_error
     @to_title
     @strip
-    def artist_name(self):
-        return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.ARTIST}).text.strip()
-
+    def artists(self):
+        artists = []
+        artists_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.ARTISTS}).text
+        if artists_string.strip():
+            for i in artists_string.split('/'):
+                artists.append(i)
+        return artists
 
     @property
     @protected_from_attribue_error
