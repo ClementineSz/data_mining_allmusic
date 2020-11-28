@@ -1,5 +1,5 @@
 from database.database_manager import sql_session, create_tables, drop_tables, get_or_create, create_database, \
-    insert_album
+    insert_album, drop_database
 from models.album import Album as ModelAlbum, Artist, Label, Mood, Theme, Style, Track, ReviewBody, Genre, Review, \
     Credit, Role
 from scraping.album import Album as ScrapingAlbum
@@ -15,6 +15,7 @@ def test_insert_all():
         album = ScrapingAlbum(album_html)
         insert_album(session, album)
 
+
 def test_insert_one():
     session = sql_session()
 
@@ -22,6 +23,7 @@ def test_insert_one():
 
     album = ScrapingAlbum(albums_html.pop(0))
     insert_album(session, album)
+
 
 def test_scrape_all_data():
     get_new_albums()
@@ -43,8 +45,12 @@ def test_refresh_tables():
 def test_refresh_and_insert():
     drop_tables()
     create_tables()
-    test_insert_all()
+    test_insert_one()
 
 
 def test_create_database():
     create_database()
+
+
+def test_drop_database():
+    drop_database()

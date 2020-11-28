@@ -89,40 +89,34 @@ def insert_album(session, album):
     logger.info(f'Added {album.title} to the database.')
 
 
-def get_engine():
-    return create_engine(SQL_URL, echo=False)
-
-
 def create_database():
-    engine = get_engine()
+    engine = create_engine(SQL_URL, echo=True)
     engine.execute(f"CREATE DATABASE {DB_NAME}")
 
 
-def use_database():
-    engine = get_engine()
-    engine.execute(f"USE {DB_NAME}")
+def drop_database():
+    engine = create_engine(SQL_URL + DB_NAME, echo=True)
+    engine.execute(f"DROP DATABASE {DB_NAME}")
 
 
 def create_tables():
-    engine = get_engine()
+    engine = create_engine(SQL_URL + DB_NAME, echo=True)
     Base.metadata.create_all(engine)
 
 
+# engine = create_engine('mysql+mysqlconnector://root:?????????@localhost/dballmusic')
+
+
 def drop_tables():
-    engine = create_engine(SQL_URL, echo=True)
+    engine = create_engine(SQL_URL + DB_NAME, echo=True)
     Base.metadata.drop_all(engine)
 
 
 def sql_session():
-    engine = sql_engine()
+    engine = create_engine(SQL_URL + DB_NAME, echo=True)
     Session = sessionmaker()
     Session.configure(bind=engine)
     return Session()
-
-
-def sql_engine():
-    engine = create_engine(SQL_URL, echo=True)
-    return engine
 
 
 def insert_albums(albums: List[Album]):
