@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from scraping.config import HtmlTags, HtmlClasses
-from scraping.utils import protected_from_attribue_error, to_title, strip
+from scraping.utils import protected_from_attribute_error, to_title, strip
 
 
 class Track:
@@ -9,14 +9,14 @@ class Track:
         self.soup = soup
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     @to_title
     @strip
     def title(self):
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.TITLE}).text
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     @to_title
     @strip
     def composers(self):
@@ -28,7 +28,7 @@ class Track:
         return composers
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     def duration(self):
         try:
             time_string = self.soup.find(HtmlTags.TD, {'class': HtmlClasses.TIME}).text.strip()

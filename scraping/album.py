@@ -5,7 +5,7 @@ from scraping.details import Details
 from scraping.config import HtmlTags, HtmlClasses, Patterns
 from scraping.headline import Headline
 
-from scraping.utils import protected_from_attribue_error, to_title, strip
+from scraping.utils import protected_from_attribute_error, to_title, strip
 
 
 class Album:
@@ -15,17 +15,21 @@ class Album:
         self.credits = Credits(self)
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     @to_title
     @strip
     def title(self):
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.TITLE}).text.strip().lower()
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     @to_title
     @strip
     def artists(self):
+        """ Extract artist names from the soup
+
+        @return:  list of artists
+        """
         artists = []
         artists_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.ARTISTS}).text
         if artists_string.strip():
@@ -34,15 +38,23 @@ class Album:
         return artists
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     @to_title
     @strip
     def label(self):
+        """ Extract label names from the soup
+
+        @return: list of labels
+        """
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.LABELS}).text.strip()
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     def details_url(self):
+        """ Extract details url from the soup
+
+        @return: list of labels
+        """
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.IMAGE}).a['href'].strip()
 
     @property
@@ -50,8 +62,7 @@ class Album:
         return re.search(Patterns.REFERENCE_NUMBER, self.details_url).group(1)
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     def headline_review(self):
         headline_div = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.HEADLINE_REVIEW})
         return Headline(headline_div)
-

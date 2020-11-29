@@ -1,4 +1,10 @@
-def protected_from_attribue_error(func):
+def protected_from_attribute_error(func):
+    """  Decorator which catch Attributeerror and return None instead
+
+    @param func:
+    @return:
+    """
+
     def wrapper(self):
         try:
             result = func(self)

@@ -17,7 +17,14 @@ handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(handler)
 
 
-def get_or_create(session, model, **kwargs):
+def get_or_create(session: object, model: object, kwargs: object) -> object:
+    """ Check if the instance exists in the database and if not, creates it
+
+    @param session:
+    @param model:
+    @param kwargs:
+    @return:
+    """
     instance = session.query(model).filter_by(**kwargs).first()
     if instance:
         return instance
@@ -29,6 +36,11 @@ def get_or_create(session, model, **kwargs):
 
 
 def insert_album(session, album):
+    """ Inserts an album on the database
+
+    @param session:
+    @param album:
+    """
     label = get_or_create(session, Label, name=album.label)
     genre = get_or_create(session, Genre, description=album.details.genre)
     review_body = get_or_create(session, ReviewBody, content=album.details.review_body)
@@ -90,29 +102,42 @@ def insert_album(session, album):
 
 
 def create_database():
+    """ Create a database
+
+    """
     engine = create_engine(SQL_URL, echo=True)
     engine.execute(f"CREATE DATABASE {DB_NAME}")
 
 
 def drop_database():
+    """ Drop the database
+
+    """
     engine = create_engine(SQL_URL + DB_NAME, echo=True)
     engine.execute(f"DROP DATABASE {DB_NAME}")
 
 
 def create_tables():
+    """ Create the tables in the database
+
+    """
     engine = create_engine(SQL_URL + DB_NAME, echo=True)
     Base.metadata.create_all(engine)
 
 
-# engine = create_engine('mysql+mysqlconnector://root:?????????@localhost/dballmusic')
-
-
 def drop_tables():
+    """ Drop the tables in the  database
+
+    """
     engine = create_engine(SQL_URL + DB_NAME, echo=True)
     Base.metadata.drop_all(engine)
 
 
 def sql_session():
+    """ Create a session
+
+    @return:
+    """
     engine = create_engine(SQL_URL + DB_NAME, echo=True)
     Session = sessionmaker()
     Session.configure(bind=engine)
@@ -120,6 +145,10 @@ def sql_session():
 
 
 def insert_albums(albums: List[Album]):
+    """ Insert albums in the database
+
+    @param albums:
+    """
     session = sql_session()
     for album in albums:
         insert_album(session, album)

@@ -4,7 +4,7 @@ from request_manager import request_manager
 from request_manager.request_manager import fetch
 from scraping.config import Endpoints, HtmlClasses, HtmlTags
 from scraping.credit import Credit
-from scraping.utils import protected_from_attribue_error
+from scraping.utils import protected_from_attribute_error
 
 
 class Credits:
@@ -18,7 +18,7 @@ class Credits:
         return BeautifulSoup(response.text, 'html.parser')
 
     @property
-    @protected_from_attribue_error
+    @protected_from_attribute_error
     def credits(self):
         section_credits = self.soup.find(HtmlTags.SECTION, {'class': HtmlClasses.CREDITS})
         credits_tags = section_credits.find_all(HtmlTags.TR)

@@ -4,6 +4,14 @@ from request_manager.config import USER_AGENT
 
 
 def fetch(url, data=None, post=False, headers=None):
+    """ Send a post or get request with headers
+
+    @param url:
+    @param data:
+    @param post:
+    @param headers:
+    @return:
+    """
     print(f'{"POST" if post else "GET"} - \"{url}\"')
     request_headers = {"User-Agent": USER_AGENT}
     if headers is not None:

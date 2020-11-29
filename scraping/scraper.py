@@ -15,8 +15,9 @@ logger.addHandler(handler)
 
 
 def get_new_albums():
-    """
+    """  Create album per new feature
 
+    @return: a list of albums
     """
     albums_divs = get_albums_html()
 
@@ -31,6 +32,10 @@ def get_new_albums():
 
 
 def get_albums_html():
+    """ Get the html of new release page and find the divs with new release information
+
+    @return: all divs with information of new feature album
+    """
     url = request_manager.create_url(Endpoints.BASE, Endpoints.NEW_RELEASES)
     response = request_manager.fetch(url)
     soup = BeautifulSoup(response.text, 'html.parser')
