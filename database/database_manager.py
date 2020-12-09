@@ -17,7 +17,7 @@ handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(handler)
 
 
-def get_or_create(session: object, model: object, kwargs: object) -> object:
+def get_or_create(session, model, **kwargs):
     """ Check if the instance exists in the database and if not, creates it
 
     @param session:
