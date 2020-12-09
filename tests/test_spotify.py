@@ -1,6 +1,6 @@
 import os
 
-from spotify_api.request_data_api import SpotifyApi
+from spotify_api.spotify_api_manager import SpotifyApi
 
 
 def test_get_client_id():
@@ -16,8 +16,6 @@ def test_get_client_secret():
 
 
 def test_get_access_token():
-   api = SpotifyApi()
-   api.get_authorization()
-
-
-#def test_get_album_popularity(spotify_album_id):
+    api = SpotifyApi()
+    print(api.access_token)
+# def test_get_album_popularity(spotify_album_id):
