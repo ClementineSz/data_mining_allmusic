@@ -10,6 +10,7 @@ from models.album import Album, Artist, Label, Style, Mood, Theme, Track, Review
 from scraping.album import Album
 
 from models.album import Album as ModelAlbum
+from spotify_api.spotify_api_manager import SpotifyApi
 
 logger = logging.getLogger('database_manager')
 logger.setLevel(logging.INFO)
@@ -17,7 +18,7 @@ handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(handler)
 
 
-def get_or_create(session: object, model: object, kwargs: object) -> object:
+def get_or_create(session, model, **kwargs):
     """ Check if the instance exists in the database and if not, creates it
 
     @param session:
@@ -53,8 +54,15 @@ def insert_album(session, album):
     model_album.headline_review_author = album.headline_review.author
     model_album.headline_review_content = album.headline_review.content
 
+    model_album.popularity = SpotifyApi.get_album_popularity(album.title, album.artists[0])
     if album.artists:
-        artists = [get_or_create(session, Artist, name=artist) for artist in album.artists]
+        artists = []
+        for artist in album.artists:
+            artist = get_or_create(session, Artist, name=artist)
+            popularity, followers = SpotifyApi.get_artist_info(artist.name)
+            artist.popularity = popularity
+            artist.followers = followers
+
         model_album.artists = artists
 
     if album.credits:

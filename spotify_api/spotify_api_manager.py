@@ -59,3 +59,7 @@ class SpotifyApi:
         parsed = r.json()
         popularity = parsed.get('popularity')
         print(popularity)
+
+    @staticmethod
+    def get_artist_info(name):
+        pass
