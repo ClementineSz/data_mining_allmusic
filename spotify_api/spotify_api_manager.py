@@ -6,6 +6,9 @@ import base64
 import requests
 from spotify_api.config import SpotifyEndpoints, SpotifyConstants
 
+from dotenv import load_dotenv
+
+load_dotenv()
 logger = logging.getLogger('spotify_api')
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler(sys.stdout)
@@ -20,6 +23,7 @@ def get_encoded_client_data():
 
 
 class SpotifyApi:
+    access_token = None
 
     @staticmethod
     def get_access_token():
@@ -29,6 +33,9 @@ class SpotifyApi:
         """
         logger.info("Getting access token")
 
+        if SpotifyApi.access_token is not None:
+            return SpotifyApi.access_token
+
         base64_bytes = get_encoded_client_data()
 
         headers = {'Authorization': f"Basic {base64_bytes.decode('ascii')}"}
@@ -36,7 +43,8 @@ class SpotifyApi:
 
         result = requests.post(SpotifyEndpoints.API_TOKEN, data=data, headers=headers)
         access_token = result.json().get('access_token')
-        return access_token
+        SpotifyApi.access_token = access_token
+        return SpotifyApi.access_token
 
     @staticmethod
     def get_album_id(album_name, artist_name):
@@ -67,55 +75,47 @@ class SpotifyApi:
         return artist_id
 
     @staticmethod
-    def get_album_popularity(album_title, album_artist):
-        access_token = SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
-        spotify_id = SpotifyApi.get_album_id(album_title, album_artist)
-        url = SpotifyEndpoints.ALBUM + spotify_id
-        r = requests.get(url, headers=headers)
-        parsed = r.json()
-        popularity = parsed.get('popularity')
-        logger.info(f'Got popularity for {album_title} by {album_artist}')
-        return popularity
-
-    @staticmethod
-    def get_artist_popularity(album_title, album_artist):
-        access_token = SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
-        spotify_artist_id = SpotifyApi.get_artist_id(album_title, album_artist)
-        url = SpotifyEndpoints.ARTIST + spotify_artist_id
-        r = requests.get(url, headers=headers)
-        parsed = r.json()
-        artist_popularity = parsed.get('popularity')
-        logger.info(f'Got popularity for {album_artist}')
-        return artist_popularity
-
-    @staticmethod
-    def get_artist_followers(album_title, album_artist):
-        access_token = SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
-        spotify_artist_id = SpotifyApi.get_artist_id(album_title, album_artist)
-        url = SpotifyEndpoints.ARTIST + spotify_artist_id
-        r = requests.get(url, headers=headers)
-        parsed = r.json()
-        artist_followers = parsed.get('followers')
-        logger.info(f'Got followers for {album_artist}')
-        return artist_followers
-
-    @staticmethod
-    def get_album_info(self, album_title, album_artist_name):
+    def get_album_info(album_title, album_artist_name):
         """
 
         @param album_title:
         @param album_artist_name:
         """
 
-        album_spotify_info = dict()
-        album_spotify_info['popularity'] = SpotifyApi.get_album_popularity(album_title, album_artist_name)
-        # for
-        #
-        #
-        #     'popularity': 45,
-        #     'artists': {'Rihanna': {'popularity': 90, 'followers': 140},
-        #                 'EMINEM': {'popularity': 90, 'followers': 140}}
-        # }
+        album_id = SpotifyApi.get_album_id(album_title, album_artist_name)
+
+        full_album = SpotifyApi.get_full_album_info(album_id)
+
+        popularity = full_album.get('popularity')
+
+        artist_ids = [artist.get('id') for artist in full_album.get('artists')]
+        artists = {}
+        for artist_id in artist_ids:
+            name, popularity, followers = SpotifyApi.get_artist_info(artist_id)
+            artists[name] = {'popularity': popularity, 'followers': followers}
+        return {
+            'popularity': popularity,
+            'artists': artists
+        }
+
+    @staticmethod
+    def get_artist_info(artist_id):
+        access_token = SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {access_token}"}
+        url = SpotifyEndpoints.ARTIST + artist_id
+        r = requests.get(url, headers=headers)
+        parsed = r.json()
+
+        popularity = parsed.get('popularity')
+        name = parsed.get('name')
+        followers = parsed.get('followers').get('total')
+
+        return name, popularity, followers
+
+    @staticmethod
+    def get_full_album_info(album_id):
+        access_token = SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {access_token}"}
+        url = SpotifyEndpoints.ALBUM + album_id
+        r = requests.get(url, headers=headers)
+        return r.json()

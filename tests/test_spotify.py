@@ -20,18 +20,5 @@ def test_get_access_token():
     print(album_id)
 
 
-# album_info = SpotifyApi.get_album_info(album_id)
-# def test_get_album_popularity(spotify_album_id):
-
-
-def test_get_album_info():
-    # album_id = SpotifyApi.get_album_id('Moment', 'Dark Tranquillity')
-    album_info = SpotifyApi.get_album_popularity('Moment', 'Dark Tranquillity')
-    print(album_info)
-
-
 def test_get_artist_info():
-    #artist_id = SpotifyApi.get_artist_id('Moment', 'Dark Tranquillity')
-    artist_popularity = SpotifyApi.get_artist_popularity('Moment', 'Dark Tranquillity')
-    artist_followers = SpotifyApi.get_artist_followers('Moment', 'Dark Tranquillity')
-    print(artist_popularity,artist_followers)
+    info = SpotifyApi.get_album_info('Moment', 'Dark Tranquillity')

@@ -19,12 +19,9 @@ logger.addHandler(handler)
 
 
 def get_or_create(session, model, **kwargs):
-    """ Check if the instance exists in the database and if not, creates it
+    """
+    Check if the instance exists in the database and if not, creates it
 
-    @param session:
-    @param model:
-    @param kwargs:
-    @return:
     """
     instance = session.query(model).filter_by(**kwargs).first()
     if instance:
@@ -55,11 +52,7 @@ def insert_album(session, album):
     model_album.headline_review_content = album.headline_review.content
 
     album_spotify_info = SpotifyApi.get_album_info(album.title, album.artists[0])
-    album_spotify_info = {
-        'popularity': 45,
-        'artists': {'Rihanna': {'popularity': 90, 'followers': 140},
-                    'EMINEM': {'popularity': 90, 'followers': 140}}
-    }
+
     model_album.popularity = album_spotify_info.get('popularity')
     if album.artists:
         artists = []
@@ -67,7 +60,7 @@ def insert_album(session, album):
         for artist in album.artists:
             artist = get_or_create(session, Artist, name=artist)
             try:
-                spotify_artist = spotify_artists[artist]
+                spotify_artist = spotify_artists[artist.name]
             except KeyError:
                 continue
             popularity, followers = spotify_artist.get('popularity'), spotify_artist.get('followers')
