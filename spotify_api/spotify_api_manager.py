@@ -23,6 +23,10 @@ class SpotifyApi:
 
     @staticmethod
     def get_access_token():
+        """ Get the access token for the api
+
+        @return: access token
+        """
         logger.info("Getting access token")
 
         base64_bytes = get_encoded_client_data()
@@ -59,6 +63,7 @@ class SpotifyApi:
         parsed = r.json()
         artists = parsed.get('artists')
         artist_id = artists[0].get('id')
+        logger.info(f'Got artist id for {album_title} by {album_artist}')
         return artist_id
 
     @staticmethod
@@ -70,6 +75,7 @@ class SpotifyApi:
         r = requests.get(url, headers=headers)
         parsed = r.json()
         popularity = parsed.get('popularity')
+        logger.info(f'Got popularity for {album_title} by {album_artist}')
         return popularity
 
     @staticmethod
@@ -81,6 +87,7 @@ class SpotifyApi:
         r = requests.get(url, headers=headers)
         parsed = r.json()
         artist_popularity = parsed.get('popularity')
+        logger.info(f'Got popularity for {album_artist}')
         return artist_popularity
 
     @staticmethod
@@ -92,6 +99,7 @@ class SpotifyApi:
         r = requests.get(url, headers=headers)
         parsed = r.json()
         artist_followers = parsed.get('followers')
+        logger.info(f'Got followers for {album_artist}')
         return artist_followers
 
     @staticmethod
@@ -104,10 +112,10 @@ class SpotifyApi:
 
         album_spotify_info = dict()
         album_spotify_info['popularity'] = SpotifyApi.get_album_popularity(album_title, album_artist_name)
-        for
-
-
-            'popularity': 45,
-            'artists': {'Rihanna': {'popularity': 90, 'followers': 140},
-                        'EMINEM': {'popularity': 90, 'followers': 140}}
-        }
+        # for
+        #
+        #
+        #     'popularity': 45,
+        #     'artists': {'Rihanna': {'popularity': 90, 'followers': 140},
+        #                 'EMINEM': {'popularity': 90, 'followers': 140}}
+        # }
