@@ -52,7 +52,7 @@ class SpotifyApi:
         headers = {"Authorization": f"Bearer {access_token}"}
         query = f"{album_name} artist:{artist_name}"
         params = {'q': query, 'type': 'album', 'limit': 1}
-        r = requests.get(SpotifyEndpoints.ALBUM_SEARCH, params=params, headers=headers)
+        r = requests.get(SpotifyEndpoints.SEARCH, params=params, headers=headers)
         parsed = r.json()
         albums = parsed.get('albums').get('items')
         first_result = albums[0]
@@ -60,19 +60,6 @@ class SpotifyApi:
 
         logger.info(f'Got album id for {album_name} by {artist_name}')
         return album_id
-
-    @staticmethod
-    def get_artist_id(album_title, album_artist):
-        access_token = SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
-        spotify_id = SpotifyApi.get_album_id(album_title, album_artist)
-        url = SpotifyEndpoints.ALBUM + spotify_id
-        r = requests.get(url, headers=headers)
-        parsed = r.json()
-        artists = parsed.get('artists')
-        artist_id = artists[0].get('id')
-        logger.info(f'Got artist id for {album_title} by {album_artist}')
-        return artist_id
 
     @staticmethod
     def get_album_info(album_title, album_artist_name):
@@ -88,18 +75,24 @@ class SpotifyApi:
 
         popularity = full_album.get('popularity')
 
-        artist_ids = [artist.get('id') for artist in full_album.get('artists')]
-        artists = {}
-        for artist_id in artist_ids:
-            name, popularity, followers = SpotifyApi.get_artist_info(artist_id)
-            artists[name] = {'popularity': popularity, 'followers': followers}
         return {
             'popularity': popularity,
-            'artists': artists
         }
 
     @staticmethod
-    def get_artist_info(artist_id):
+    def get_artist_id(artist_name):
+        access_token = SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {access_token}"}
+        query = f"{artist_name}"
+        params = {'q': query, 'type': 'artist', 'limit': 1}
+        r = requests.get(SpotifyEndpoints.SEARCH, params=params, headers=headers)
+        artists = r.json().get('artists').get('items')
+        artist = artists[0]
+        return artist.get('id')
+
+    @staticmethod
+    def get_artist_info(artist_name):
+        artist_id = SpotifyApi.get_artist_id(artist_name)
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         url = SpotifyEndpoints.ARTIST + artist_id
@@ -110,7 +103,7 @@ class SpotifyApi:
         name = parsed.get('name')
         followers = parsed.get('followers').get('total')
 
-        return name, popularity, followers
+        return {'name': name, 'popularity': popularity, 'followers': followers}
 
     @staticmethod
     def get_full_album_info(album_id):

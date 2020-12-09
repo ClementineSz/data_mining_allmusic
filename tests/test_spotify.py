@@ -21,4 +21,5 @@ def test_get_access_token():
 
 
 def test_get_artist_info():
-    info = SpotifyApi.get_album_info('Moment', 'Dark Tranquillity')
+    info = SpotifyApi.get_artist_info('Miley Cyrus')
+    print(info)

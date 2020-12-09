@@ -56,13 +56,9 @@ def insert_album(session, album):
     model_album.popularity = album_spotify_info.get('popularity')
     if album.artists:
         artists = []
-        spotify_artists = album_spotify_info.get('artists')
         for artist in album.artists:
             artist = get_or_create(session, Artist, name=artist)
-            try:
-                spotify_artist = spotify_artists[artist.name]
-            except KeyError:
-                continue
+            spotify_artist = SpotifyApi.get_artist_info(artist.name)
             popularity, followers = spotify_artist.get('popularity'), spotify_artist.get('followers')
             artist.popularity = popularity
             artist.followers = followers
@@ -73,9 +69,14 @@ def insert_album(session, album):
         credits = []
         for credit in album.credits:
             for role in credit.roles:
-                credits.append(
-                    get_or_create(session, Credit, artist=get_or_create(session, Artist, name=credit.artist_name),
-                                  role=get_or_create(session, Role, name=role)))
+                spotify_artist = SpotifyApi.get_artist_info(credit.artist_name)
+                popularity, followers = spotify_artist.get('popularity'), spotify_artist.get('followers')
+
+                credit_artist = get_or_create(session, Artist, name=credit.artist_name)
+                credit_artist.popularity = popularity
+                credit_artist.followers = followers
+
+                credits.append(get_or_create(session, Credit, artist=credit_artist, role=get_or_create(session, Role, name=role)))
         model_album.credits = credits
 
     if album.details.moods:
