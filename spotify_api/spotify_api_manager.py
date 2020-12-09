@@ -22,6 +22,14 @@ def get_encoded_client_data():
     return base64_bytes
 
 
+class SpotifyArtistNotFoundError(Exception):
+    pass
+
+
+class SpotifyAlbumNotFoundError(Exception):
+    pass
+
+
 class SpotifyApi:
     access_token = None
 
@@ -55,7 +63,10 @@ class SpotifyApi:
         r = requests.get(SpotifyEndpoints.SEARCH, params=params, headers=headers)
         parsed = r.json()
         albums = parsed.get('albums').get('items')
-        first_result = albums[0]
+        try:
+            first_result = albums[0]
+        except IndexError:
+            raise SpotifyAlbumNotFoundError()
         album_id = first_result.get('id')
 
         logger.info(f'Got album id for {album_name} by {artist_name}')
@@ -87,7 +98,10 @@ class SpotifyApi:
         params = {'q': query, 'type': 'artist', 'limit': 1}
         r = requests.get(SpotifyEndpoints.SEARCH, params=params, headers=headers)
         artists = r.json().get('artists').get('items')
-        artist = artists[0]
+        try:
+            artist = artists[0]
+        except IndexError:
+            raise SpotifyArtistNotFoundError()
         return artist.get('id')
 
     @staticmethod
