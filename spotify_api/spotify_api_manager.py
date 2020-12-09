@@ -27,13 +27,14 @@ class SpotifyApi:
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         query = f"{album_name} artist:{artist_name}"
-        params = {'q': query, 'type': 'album'}
+        params = {'q': query, 'type': 'album','limit': 1}
         r = requests.get(SpotifyEndpoints.ALBUM_SEARCH, params=params, headers=headers)
         parsed = r.json()
         albums = parsed.get('albums').get('items')
-        for album in albums:
-            from pprint import pprint
-            pprint(album)
+        first_result = albums[0]
+        logger.info(f'Got album id for {album_name} by {artist_name}')
+        return first_result.get('id')
+
 
     @staticmethod
     def get_access_token():
@@ -47,3 +48,14 @@ class SpotifyApi:
         result = requests.post(SpotifyEndpoints.API_TOKEN, data=data, headers=headers)
         access_token = result.json().get('access_token')
         return access_token
+
+    @staticmethod
+    def get_album_popularity(album_title, album_artist):
+        access_token = SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {access_token}"}
+        spotify_id = SpotifyApi.get_album_id(album_title, album_artist)
+        url = SpotifyEndpoints.ALBUM + spotify_id
+        r = requests.get(url, headers=headers)
+        parsed = r.json()
+        popularity = parsed.get('popularity')
+        print(popularity)
