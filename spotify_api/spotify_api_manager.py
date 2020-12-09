@@ -79,6 +79,7 @@ class SpotifyApi:
         @param album_title:
         @param album_artist_name:
         """
+        logger.info(f'Fetching album {album_title}')
 
         album_id = SpotifyApi.get_album_id(album_title, album_artist_name)
 
@@ -106,6 +107,7 @@ class SpotifyApi:
 
     @staticmethod
     def get_artist_info(artist_name):
+        logger.info(f'Fetching info for {artist_name}')
         artist_id = SpotifyApi.get_artist_id(artist_name)
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
@@ -121,6 +123,7 @@ class SpotifyApi:
 
     @staticmethod
     def get_full_album_info(album_id):
+
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         url = SpotifyEndpoints.ALBUM + album_id
