@@ -12,10 +12,16 @@ from scraping.album import Album
 from models.album import Album as ModelAlbum
 from spotify_api.spotify_api_manager import SpotifyApi, SpotifyArtistNotFoundError, SpotifyAlbumNotFoundError
 
-logger = logging.getLogger('database_manager')
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-logger.addHandler(handler)
+logger = logging.getLogger('main.database_manager')
+
+
+def get(session, model, **kwargs):
+    return session.query(model).filter_by(**kwargs).first()
+
+
+def create(session, obj):
+    session.add(obj)
+    session.commit()
 
 
 def get_or_create(session, model, **kwargs):
@@ -58,17 +64,18 @@ def insert_album(session, album):
 
     if album.artists:
         artists = []
-        for artist in album.artists:
-            try:
-                spotify_artist = SpotifyApi.get_artist_info(artist)
-                popularity, followers = spotify_artist.get('popularity'), spotify_artist.get('followers')
-
-            except SpotifyArtistNotFoundError:
-                continue
-            finally:
-                artist = get_or_create(session, Artist, name=artist)
-            artist.popularity = popularity
-            artist.followers = followers
+        for artist_name in album.artists:
+            db_artist = get(session, Artist, name=artist_name)
+            if not db_artist:
+                db_artist = Artist(name=artist_name)
+                try:
+                    spotify_artist = SpotifyApi.get_artist_info(artist_name)
+                    db_artist.popularity = spotify_artist.get('popularity')
+                    db_artist.followers = spotify_artist.get('followers')
+                except SpotifyArtistNotFoundError:
+                    pass
+                create(session, db_artist)
+            artists.append(db_artist)
 
         model_album.artists = artists
 
@@ -76,20 +83,18 @@ def insert_album(session, album):
         credits = []
         for credit in album.credits:
             for role in credit.roles:
-                try:
-                    spotify_artist = SpotifyApi.get_artist_info(credit.artist_name)
-                    popularity, followers = spotify_artist.get('popularity'), spotify_artist.get('followers')
-
-                except SpotifyArtistNotFoundError:
-                    continue
-                finally:
-                    credit_artist = get_or_create(session, Artist, name=credit.artist_name)
-
-                credit_artist.popularity = popularity
-                credit_artist.followers = followers
-
+                db_artist = get(session, Artist, name=credit.artist_name)
+                if not db_artist:
+                    db_artist = Artist(name=credit.artist_name)
+                    try:
+                        spotify_artist = SpotifyApi.get_artist_info(credit.artist_name)
+                        db_artist.popularity = spotify_artist.get('popularity')
+                        db_artist.followers = spotify_artist.get('followers')
+                    except SpotifyArtistNotFoundError:
+                        pass
+                    create(session, db_artist)
                 credits.append(
-                    get_or_create(session, Credit, artist=credit_artist, role=get_or_create(session, Role, name=role)))
+                    get_or_create(session, Credit, artist=db_artist, role=get_or_create(session, Role, name=role)))
         model_album.credits = credits
 
     if album.details.moods:

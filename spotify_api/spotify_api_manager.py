@@ -9,10 +9,7 @@ from spotify_api.config import SpotifyEndpoints, SpotifyConstants
 from dotenv import load_dotenv
 
 load_dotenv()
-logger = logging.getLogger('spotify_api')
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-logger.addHandler(handler)
+logger = logging.getLogger('main.spotify_api')
 
 
 def get_encoded_client_data():
@@ -39,11 +36,10 @@ class SpotifyApi:
 
         @return: access token
         """
-        logger.info("Getting access token")
 
         if SpotifyApi.access_token is not None:
             return SpotifyApi.access_token
-
+        logger.info("Getting access token")
         base64_bytes = get_encoded_client_data()
 
         headers = {'Authorization': f"Basic {base64_bytes.decode('ascii')}"}
@@ -69,7 +65,6 @@ class SpotifyApi:
             raise SpotifyAlbumNotFoundError()
         album_id = first_result.get('id')
 
-        logger.info(f'Got album id for {album_name} by {artist_name}')
         return album_id
 
     @staticmethod
@@ -107,7 +102,7 @@ class SpotifyApi:
 
     @staticmethod
     def get_artist_info(artist_name):
-        logger.info(f'Fetching info for {artist_name}')
+        logger.info(f'Fetching artist {artist_name}')
         artist_id = SpotifyApi.get_artist_id(artist_name)
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}

@@ -3,15 +3,11 @@ import sys
 
 from bs4 import BeautifulSoup
 
-from request_manager import request_manager
+from scraping import utils
 from scraping.album import Album
 from scraping.config import Endpoints, HtmlClasses, HtmlTags
 
-logger = logging.getLogger('scraper')
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-logger.addHandler(handler)
-
+logger = logging.getLogger('main.scraper')
 
 def get_new_albums():
     """  Create album per new feature
@@ -35,8 +31,8 @@ def get_albums_html():
 
     @return: all divs with information of new feature album
     """
-    url = request_manager.create_url(Endpoints.BASE, Endpoints.NEW_RELEASES)
-    response = request_manager.fetch(url)
+    url = utils.create_url(Endpoints.BASE, Endpoints.NEW_RELEASES)
+    response = utils.fetch(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     albums_divs = soup.find_all(HtmlTags.DIV, {"class": HtmlClasses.NEW_RELEASE})
     return albums_divs

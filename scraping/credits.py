@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 
-from request_manager import request_manager
-from request_manager.request_manager import fetch
+from scraping import utils
 from scraping.config import Endpoints, HtmlClasses, HtmlTags
 from scraping.credit import Credit
 from scraping.utils import protected_from_attribute_error
@@ -13,8 +12,8 @@ class Credits:
         self.soup = self.load_soup()
 
     def load_soup(self):
-        url = request_manager.create_url(Endpoints.BASE, self.album.details_url, Endpoints.CREDITS)
-        response = fetch(url)
+        url = utils.create_url(Endpoints.BASE, self.album.details_url, Endpoints.CREDITS)
+        response = utils.fetch(url)
         return BeautifulSoup(response.text, 'html.parser')
 
     @property
