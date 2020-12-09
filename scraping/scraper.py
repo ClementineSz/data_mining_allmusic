@@ -3,7 +3,6 @@ import sys
 
 from bs4 import BeautifulSoup
 
-import utils
 from request_manager import request_manager
 from scraping.album import Album
 from scraping.config import Endpoints, HtmlClasses, HtmlTags
