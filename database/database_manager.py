@@ -54,12 +54,23 @@ def insert_album(session, album):
     model_album.headline_review_author = album.headline_review.author
     model_album.headline_review_content = album.headline_review.content
 
-    model_album.popularity = SpotifyApi.get_album_popularity(album.title, album.artists[0])
+    album_spotify_info = SpotifyApi.get_album_info(album.title, album.artists[0])
+    album_spotify_info = {
+        'popularity': 45,
+        'artists': {'Rihanna': {'popularity': 90, 'followers': 140},
+                    'EMINEM': {'popularity': 90, 'followers': 140}}
+    }
+    model_album.popularity = album_spotify_info.get('popularity')
     if album.artists:
         artists = []
+        spotify_artists = album_spotify_info.get('artists')
         for artist in album.artists:
             artist = get_or_create(session, Artist, name=artist)
-            popularity, followers = SpotifyApi.get_artist_info(artist.name)
+            try:
+                spotify_artist = spotify_artists[artist]
+            except KeyError:
+                continue
+            popularity, followers = spotify_artist.get('popularity'), spotify_artist.get('followers')
             artist.popularity = popularity
             artist.followers = followers
 
