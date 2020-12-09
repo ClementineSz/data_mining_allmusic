@@ -23,12 +23,17 @@ def get_encoded_client_data():
 class SpotifyApi:
 
     @staticmethod
-    def get_album_id(album_name):
+    def get_album_id(album_name, artist_name):
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
-        params = {'q': album_name, 'type': 'album'}
+        query = f"{album_name} artist:{artist_name}"
+        params = {'q': query, 'type': 'album'}
         r = requests.get(SpotifyEndpoints.ALBUM_SEARCH, params=params, headers=headers)
-        return r.json()
+        parsed = r.json()
+        albums = parsed.get('albums').get('items')
+        for album in albums:
+            from pprint import pprint
+            pprint(album)
 
     @staticmethod
     def get_access_token():

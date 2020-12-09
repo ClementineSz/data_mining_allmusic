@@ -16,7 +16,7 @@ def test_get_client_secret():
 
 
 def test_get_access_token():
-    album_id = SpotifyApi.get_album_id('Moment')
+    album_id = SpotifyApi.get_album_id('Moment', 'Dark Tranquillity')
     print(album_id)
     assert album_id is not None
 # def test_get_album_popularity(spotify_album_id):
