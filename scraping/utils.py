@@ -52,7 +52,7 @@ def fetch(url, data=None, post=False, headers=None):
     @param headers:
     @return:
     """
-    logger.info(f'{"POST" if post else "GET"} - \"{url}\"')
+    logger.debug(f'{"POST" if post else "GET"} - \"{url}\"')
     request_headers = {"User-Agent": Endpoints.USER_AGENT}
     if headers is not None:
         request_headers.update(headers)

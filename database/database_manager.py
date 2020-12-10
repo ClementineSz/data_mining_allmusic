@@ -136,7 +136,7 @@ def create_database():
     """ Create a database
 
     """
-    engine = create_engine(SQL_URL, echo=True)
+    engine = create_engine(SQL_URL, echo=False)
     engine.execute(f"CREATE DATABASE {DB_NAME}")
 
 
@@ -144,7 +144,7 @@ def drop_database():
     """ Drop the database
 
     """
-    engine = create_engine(SQL_URL + DB_NAME, echo=True)
+    engine = create_engine(SQL_URL + DB_NAME, echo=False)
     engine.execute(f"DROP DATABASE {DB_NAME}")
 
 
@@ -152,7 +152,7 @@ def create_tables():
     """ Create the tables in the database
 
     """
-    engine = create_engine(SQL_URL + DB_NAME, echo=True)
+    engine = create_engine(SQL_URL + DB_NAME, echo=False)
     Base.metadata.create_all(engine)
 
 
@@ -160,7 +160,7 @@ def drop_tables():
     """ Drop the tables in the  database
 
     """
-    engine = create_engine(SQL_URL + DB_NAME, echo=True)
+    engine = create_engine(SQL_URL + DB_NAME, echo=False)
     Base.metadata.drop_all(engine)
 
 

@@ -62,6 +62,7 @@ class SpotifyApi:
         try:
             first_result = albums[0]
         except IndexError:
+            logger.error(f'No information on Spotify for {album_name}')
             raise SpotifyAlbumNotFoundError()
         album_id = first_result.get('id')
 
@@ -97,6 +98,7 @@ class SpotifyApi:
         try:
             artist = artists[0]
         except IndexError:
+            logger.error(f'No information on Spotify for {artist_name}')
             raise SpotifyArtistNotFoundError()
         return artist.get('id')
 
