@@ -9,7 +9,7 @@ from spotify_api.config import SpotifyEndpoints, SpotifyConstants
 from dotenv import load_dotenv
 
 load_dotenv()
-logger = logging.getLogger('main.spotify_api')
+logger = logging.getLogger('main')
 
 
 def get_encoded_client_data():

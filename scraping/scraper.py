@@ -7,7 +7,7 @@ from scraping import utils
 from scraping.album import Album
 from scraping.config import Endpoints, HtmlClasses, HtmlTags
 
-logger = logging.getLogger('main.scraper')
+logger = logging.getLogger('main')
 
 def get_new_albums():
     """  Create album per new feature

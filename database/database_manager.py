@@ -12,7 +12,7 @@ from scraping.album import Album
 from models.album import Album as ModelAlbum
 from spotify_api.spotify_api_manager import SpotifyApi, SpotifyArtistNotFoundError, SpotifyAlbumNotFoundError
 
-logger = logging.getLogger('main.database_manager')
+logger = logging.getLogger('main')
 
 
 def get(session, model, **kwargs):
