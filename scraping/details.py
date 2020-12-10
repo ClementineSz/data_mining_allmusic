@@ -2,8 +2,7 @@ from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 
-from request_manager import request_manager
-from request_manager.request_manager import fetch
+from scraping import utils
 from scraping.reviews import Reviews
 from scraping.config import Endpoints, HtmlTags, HtmlClasses
 from scraping.track import Track
@@ -18,7 +17,7 @@ class Details:
 
     def load_soup(self):
         url = Endpoints.BASE + self.album.details_url
-        response = fetch(url)
+        response = utils.fetch(url)
         return BeautifulSoup(response.text, 'html.parser')
 
     @property
@@ -50,7 +49,7 @@ class Details:
 
     @property
     def review_url(self):
-        return request_manager.create_url(Endpoints.ALBUM, Endpoints.FETCH_REVIEW_VIEW, self.album.reference_number)
+        return utils.create_url(Endpoints.ALBUM, Endpoints.FETCH_REVIEW_VIEW, self.album.reference_number)
 
     @property
     @protected_from_attribute_error

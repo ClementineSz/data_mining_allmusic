@@ -1,3 +1,12 @@
+import logging
+import sys
+
+import requests
+
+from scraping.config import Endpoints
+
+logger = logging.getLogger('main.utils')
+
 def protected_from_attribute_error(func):
     """  Decorator which catch Attributeerror and return None instead
 
@@ -33,3 +42,24 @@ def strip(func):
         return result.strip()
 
     return wrapper
+
+def fetch(url, data=None, post=False, headers=None):
+    """ Send a post or get request with headers
+
+    @param url:
+    @param data:
+    @param post:
+    @param headers:
+    @return:
+    """
+    logger.debug(f'{"POST" if post else "GET"} - \"{url}\"')
+    request_headers = {"User-Agent": Endpoints.USER_AGENT}
+    if headers is not None:
+        request_headers.update(headers)
+    if post:
+        return requests.post(url, headers=request_headers, data=data)
+    return requests.get(url, headers=request_headers, data=data)
+
+
+def create_url(*args):
+    return '/'.join(args)

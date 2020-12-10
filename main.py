@@ -1,7 +1,16 @@
 import argparse
+import logging
+import sys
 
 from database import database_manager
 from scraping.scraper import get_new_albums
+from nicelog.formatters import Colorful
+
+logger = logging.getLogger('main')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(Colorful())
+logger.addHandler(handler)
 
 
 def main():

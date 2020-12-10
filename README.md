@@ -3,8 +3,8 @@ Scrap the date of the www.allmusic.com website. We choose this website since we 
 It extracts albums that just got release during the week. 
 
 **Developers :**
-Clémentine Szalavecz
-Alexandre De Pape
+- Clémentine Szalavecz
+- Alexandre De Pape
 
 **Description :**
 For each album release, we extracted: 
@@ -20,6 +20,9 @@ For each album release, we extracted:
 - duration
 - review body also a decription
 - all of the tracklisting : composer, title and duration
+
+We also add some data from the Spotify API. Since we already add a lot of information regarding the album, we extract some data 
+more related to Spotify community like the popularity of an album and artist, and the number of followers of an artist. 
 
 **Technical description :**
 

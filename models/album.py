@@ -98,11 +98,11 @@ class Album(Base):
     title = Column(String(255))
     headline_review_author = Column(String(255))
     headline_review_content = Column(String(255))
+    popularity = Column(Integer)
 
     label_id = Column(Integer, ForeignKey('label.id'))
     genre_id = Column(Integer, ForeignKey('genre.id'))
     review_body_id = Column(Integer, ForeignKey('review_body.id'))
-
     # One to Many
     label = relationship("Label", back_populates='albums')
     genre = relationship("Genre", back_populates="albums")
@@ -129,6 +129,9 @@ class Artist(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
+    popularity = Column(Integer)
+    followers = Column(Integer)
+
     credits = relationship('Credit', back_populates='artist')
 
     albums = relationship("Album", secondary=ArtistAlbum.__tablename__, back_populates="artists")
