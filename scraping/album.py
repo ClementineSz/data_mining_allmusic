@@ -19,6 +19,10 @@ class Album:
     @to_title
     @strip
     def title(self):
+        """ Get the title of an album
+
+        @return: title of an album
+        """
         return self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.TITLE}).text.strip().lower()
 
     @property
@@ -59,10 +63,18 @@ class Album:
 
     @property
     def reference_number(self):
+        """ Get the reference number of an album
+
+        @return: reference number
+        """
         return re.search(Patterns.REFERENCE_NUMBER, self.details_url).group(1)
 
     @property
     @protected_from_attribute_error
     def headline_review(self):
+        """ Get the headline review of an album
+
+        @return: headline review
+        """
         headline_div = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.HEADLINE_REVIEW})
         return Headline(headline_div)

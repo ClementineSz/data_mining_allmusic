@@ -11,6 +11,10 @@ class Credit:
     @to_title
     @strip
     def artist_name(self):
+        """ Get artist name in credits parts of an album
+
+        @return:
+        """
         return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.ARTISTS}).a.text
 
     @property
@@ -18,6 +22,10 @@ class Credit:
     @to_title
     @strip
     def roles(self):
+        """ Get all the roles of an artist in the credits part
+
+        @return: role of an artist on the production of an album
+        """
         return [role.strip().lower() for role in
                 self.soup.find(HtmlTags.TD, {'class': HtmlClasses.CREDIT}).text.split(',')]
 
@@ -26,4 +34,8 @@ class Credit:
     @to_title
     @strip
     def composer(self):
+        """ Get the composer of an album
+
+        @return: composer of an album
+        """
         return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.COMPOSER}).text

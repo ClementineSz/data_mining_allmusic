@@ -13,6 +13,10 @@ logger = logging.getLogger('main')
 
 
 def get_encoded_client_data():
+    """ Encode the authorization url to send to the api
+
+    @return: encode authorization
+    """
     authorization = f"{os.environ['SPOTIFY_CLIENT_ID']}:{os.environ['SPOTIFY_CLIENT_SECRET']}"
     message_bytes = authorization.encode('ascii')
     base64_bytes = base64.b64encode(message_bytes)
@@ -52,6 +56,12 @@ class SpotifyApi:
 
     @staticmethod
     def get_album_id(album_name, artist_name):
+        """ Get the album id from the search request which take as parameter the album name from allmusing
+
+        @param album_name:
+        @param artist_name:
+        @return: album id from spotify
+        """
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         query = f"{album_name} artist:{artist_name}"
@@ -70,7 +80,7 @@ class SpotifyApi:
 
     @staticmethod
     def get_album_info(album_title, album_artist_name):
-        """
+        """ Get the popularity of the album in spotify
 
         @param album_title:
         @param album_artist_name:
@@ -89,6 +99,11 @@ class SpotifyApi:
 
     @staticmethod
     def get_artist_id(artist_name):
+        """ Get the artist id from spotify from search request
+
+        @param artist_name:
+        @return:
+        """
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         query = f"{artist_name}"
@@ -104,6 +119,11 @@ class SpotifyApi:
 
     @staticmethod
     def get_artist_info(artist_name):
+        """ Get popularity, followers from artist
+
+        @param artist_name:
+        @return: popularity and followers in spotify
+        """
         logger.info(f'Fetching artist {artist_name}')
         artist_id = SpotifyApi.get_artist_id(artist_name)
         access_token = SpotifyApi.get_access_token()
@@ -120,7 +140,11 @@ class SpotifyApi:
 
     @staticmethod
     def get_full_album_info(album_id):
+        """ Get the json from the spotify api with all information of an album
 
+        @param album_id:
+        @return: json with information of an album
+        """
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         url = SpotifyEndpoints.ALBUM + album_id
