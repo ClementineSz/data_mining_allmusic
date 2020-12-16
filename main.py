@@ -2,9 +2,10 @@ import argparse
 import logging
 import sys
 
-from database import database_manager
-from scraping.scraper import get_new_albums
 from nicelog.formatters import Colorful
+
+from database import database_manager
+from orchester import orchester
 
 logger = logging.getLogger('main')
 logger.setLevel(logging.DEBUG)
@@ -32,10 +33,7 @@ def main():
     elif args.task == 'drop_database':
         database_manager.drop_database()
     elif args.task == 'scrape':
-        albums = get_new_albums()
-        if args.mood:
-            albums = [album for album in albums if args.mood.title() in album.details.moods]
-        database_manager.insert_albums(albums)
+        orchester.orchestrate(args.mood)
 
 
 if __name__ == '__main__':

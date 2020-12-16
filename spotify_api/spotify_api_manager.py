@@ -1,12 +1,11 @@
-import json
+import base64
 import logging
 import os
-import sys
-import base64
-import requests
-from spotify_api.config import SpotifyEndpoints, SpotifyConstants
 
+import requests
 from dotenv import load_dotenv
+
+from spotify_api.config import SpotifyEndpoints
 
 load_dotenv()
 logger = logging.getLogger('main')
@@ -150,3 +149,4 @@ class SpotifyApi:
         url = SpotifyEndpoints.ALBUM + album_id
         r = requests.get(url, headers=headers)
         return r.json()
+

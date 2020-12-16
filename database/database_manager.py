@@ -1,16 +1,13 @@
 import logging
-import sys
 from typing import List
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from database.config import SQL_URL, DB_NAME
-from models.album import Album, Artist, Label, Style, Mood, Theme, Track, ReviewBody, Base, Genre, Review, Credit, Role
-from scraping.album import Album
-
 from models.album import Album as ModelAlbum
-from spotify_api.spotify_api_manager import SpotifyApi, SpotifyArtistNotFoundError, SpotifyAlbumNotFoundError
+from models.album import Artist, Label, Style, Mood, Theme, Track, ReviewBody, Base, Genre, Review, Credit, Role
+from scraping.album import Album
 
 logger = logging.getLogger('main')
 
@@ -42,21 +39,7 @@ def get_or_create(session, model, **kwargs):
 def handle_album_artists(session, model_album, album):
     if not album.artists:
         return
-    artists = []
-    for artist_name in album.artists:
-        db_artist = get(session, Artist, name=artist_name)
-        if not db_artist:
-            db_artist = Artist(name=artist_name)
-            try:
-                spotify_artist = SpotifyApi.get_artist_info(artist_name)
-                db_artist.popularity = spotify_artist.get('popularity')
-                db_artist.followers = spotify_artist.get('followers')
-            except SpotifyArtistNotFoundError:
-                pass
-            create(session, db_artist)
-        artists.append(db_artist)
-
-    model_album.artists = artists
+    model_album.artists = [get_or_create(session, Artist, name=artist.name) for artist in album.artists]
 
 
 def insert_album(session, album):
@@ -68,21 +51,14 @@ def insert_album(session, album):
     label = get_or_create(session, Label, name=album.label)
     genre = get_or_create(session, Genre, description=album.details.genre)
     review_body = get_or_create(session, ReviewBody, content=album.details.review_body)
-
     model_album = get_or_create(session, ModelAlbum, reference_number=album.reference_number)
 
-    model_album.review_body = review_body
-    model_album.title = album.title
     model_album.label = label
+    model_album.genre = genre
+    model_album.title = album.title
+    model_album.review_body = review_body
     model_album.headline_review_author = album.headline_review.author
     model_album.headline_review_content = album.headline_review.content
-    model_album.genre = genre
-
-    try:
-        album_spotify_info = SpotifyApi.get_album_info(album.title, album.artists[0])
-        model_album.popularity = album_spotify_info.get('popularity')
-    except SpotifyAlbumNotFoundError:
-        pass
 
     handle_album_artists(session, model_album, album)
     handle_album_credits(album, model_album, session)
@@ -139,21 +115,15 @@ def handle_album_moods(album, model_album, session):
 def handle_album_credits(album, model_album, session):
     if not album.credits:
         return
+
     credits = []
     for credit in album.credits:
         for role in credit.roles:
-            db_artist = get(session, Artist, name=credit.artist_name)
-            if not db_artist:
-                db_artist = Artist(name=credit.artist_name)
-                try:
-                    spotify_artist = SpotifyApi.get_artist_info(credit.artist_name)
-                    db_artist.popularity = spotify_artist.get('popularity')
-                    db_artist.followers = spotify_artist.get('followers')
-                except SpotifyArtistNotFoundError:
-                    pass
-                create(session, db_artist)
-            credits.append(
-                get_or_create(session, Credit, artist=db_artist, role=get_or_create(session, Role, name=role)))
+            db_artist = get_or_create(session, Artist, name=credit.artist)
+            role = get_or_create(session, Role, name=role)
+            credit = get_or_create(session, Credit, artist=db_artist, role=role)
+
+            credits.append(credit)
     model_album.credits = credits
 
 

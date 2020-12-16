@@ -1,3 +1,4 @@
+from scraping.artist import Artist
 from scraping.config import HtmlTags, HtmlClasses
 from scraping.utils import protected_from_attribute_error, to_title, strip
 
@@ -8,14 +9,12 @@ class Credit:
 
     @property
     @protected_from_attribute_error
-    @to_title
-    @strip
-    def artist_name(self):
+    def artist(self):
         """ Get artist name in credits parts of an album
 
         @return:
         """
-        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.ARTISTS}).a.text
+        return Artist(self.soup.find(HtmlTags.TD, {'class': HtmlClasses.ARTIST}).a.text)
 
     @property
     @protected_from_attribute_error
@@ -31,11 +30,9 @@ class Credit:
 
     @property
     @protected_from_attribute_error
-    @to_title
-    @strip
     def composer(self):
         """ Get the composer of an album
 
         @return: composer of an album
         """
-        return self.soup.find(HtmlTags.TD, {'class': HtmlClasses.COMPOSER}).text
+        return Artist(self.soup.find(HtmlTags.TD, {'class': HtmlClasses.COMPOSER}).text)

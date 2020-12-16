@@ -1,10 +1,10 @@
 import re
 
+from scraping.artist import Artist
+from scraping.config import HtmlTags, HtmlClasses, Patterns
 from scraping.credits import Credits
 from scraping.details import Details
-from scraping.config import HtmlTags, HtmlClasses, Patterns
 from scraping.headline import Headline
-
 from scraping.utils import protected_from_attribute_error, to_title, strip
 
 
@@ -27,18 +27,16 @@ class Album:
 
     @property
     @protected_from_attribute_error
-    @to_title
-    @strip
     def artists(self):
         """ Extract artist names from the soup
 
         @return:  list of artists
         """
         artists = []
-        artists_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.ARTISTS}).text
+        artists_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.ARTIST}).text
         if artists_string.strip():
-            for i in artists_string.split('/'):
-                artists.append(i)
+            for artist_name in artists_string.split('/'):
+                artists.append(Artist(artist_name))
         return artists
 
     @property

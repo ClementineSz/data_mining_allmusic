@@ -1,11 +1,10 @@
 import logging
-import sys
 
 import requests
 
 from scraping.config import Endpoints
 
-logger = logging.getLogger('main.utils')
+logger = logging.getLogger('main')
 
 def protected_from_attribute_error(func):
     """  Decorator which catch Attributeerror and return None instead

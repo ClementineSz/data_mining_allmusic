@@ -20,9 +20,9 @@ class Credits:
     @protected_from_attribute_error
     def credits(self):
         section_credits = self.soup.find(HtmlTags.SECTION, {'class': HtmlClasses.CREDITS})
-        credits_tags = section_credits.find_all(HtmlTags.TR)
-        credits_list = [Credit(credit_dit) for credit_dit in credits_tags]
-        return credits_list
+        credit_tags = section_credits.find_all(HtmlTags.TD, {"class": "artist"})
+        credit_tags = [tag.find_parent(HtmlTags.TR) for tag in credit_tags]
+        return [Credit(tag) for tag in credit_tags]
 
     def __iter__(self):
         credits_to_iterate = []
