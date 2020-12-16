@@ -1,5 +1,5 @@
-from config import MIDDLE_MANS
 from database import database_manager
+from orchestration.config import MIDDLE_MANS
 from scraping.scraper import get_new_albums
 
 

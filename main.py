@@ -5,7 +5,7 @@ import sys
 from nicelog.formatters import Colorful
 
 from database import database_manager
-from orchester import orchester
+from orchestration import orchester
 
 logger = logging.getLogger('main')
 logger.setLevel(logging.DEBUG)

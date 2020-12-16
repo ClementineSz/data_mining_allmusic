@@ -1,5 +1,5 @@
 from database.database_manager import insert_albums
-from orchester.orchester import apply_middle_mans
+from orchestration.orchester import apply_middle_mans
 from scraping.album import Album
 from scraping.scraper import get_albums_html
 
