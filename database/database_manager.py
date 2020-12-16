@@ -39,7 +39,8 @@ def get_or_create(session, model, **kwargs):
 def handle_album_artists(session, model_album, album):
     if not album.artists:
         return
-    model_album.artists = [get_or_create(session, Artist, name=artist.name) for artist in album.artists]
+    model_album.artists = [get_or_create(session, Artist, name=artist.name, popularity=artist.popularity,
+                                         followers=artist.followers) for artist in album.artists]
 
 
 def insert_album(session, album):
@@ -59,6 +60,7 @@ def insert_album(session, album):
     model_album.review_body = review_body
     model_album.headline_review_author = album.headline_review.author
     model_album.headline_review_content = album.headline_review.content
+    model_album.popularity = album.popularity
 
     handle_album_artists(session, model_album, album)
     handle_album_credits(album, model_album, session)
@@ -119,7 +121,8 @@ def handle_album_credits(album, model_album, session):
     credits = []
     for credit in album.credits:
         for role in credit.roles:
-            db_artist = get_or_create(session, Artist, name=credit.artist)
+            db_artist = get_or_create(session, Artist, name=credit.artist.name, popularity=credit.artist.popularity,
+                                      followers=credit.artist.followers)
             role = get_or_create(session, Role, name=role)
             credit = get_or_create(session, Credit, artist=db_artist, role=role)
 

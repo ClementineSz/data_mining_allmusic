@@ -10,9 +10,24 @@ from scraping.utils import protected_from_attribute_error, to_title, strip
 
 class Album:
     def __init__(self, soup):
+
         self.soup = soup
         self.details = Details(self)
         self.credits = Credits(self)
+        self._popularity = None
+        self._artists = []
+        artists_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.ARTIST}).text
+        if artists_string.strip():
+            for artist_name in artists_string.split('/'):
+                self._artists.append(Artist(artist_name))
+
+    @property
+    def popularity(self):
+        return self._popularity
+
+    @popularity.setter
+    def popularity(self, value):
+        self._popularity = value
 
     @property
     @protected_from_attribute_error
@@ -32,12 +47,8 @@ class Album:
 
         @return:  list of artists
         """
-        artists = []
-        artists_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.ARTIST}).text
-        if artists_string.strip():
-            for artist_name in artists_string.split('/'):
-                artists.append(Artist(artist_name))
-        return artists
+
+        return self._artists
 
     @property
     @protected_from_attribute_error

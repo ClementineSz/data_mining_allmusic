@@ -6,6 +6,7 @@ from scraping.utils import protected_from_attribute_error, to_title, strip
 class Credit:
     def __init__(self, soup):
         self.soup = soup
+        self._artist = Artist(self.soup.find(HtmlTags.TD, {'class': HtmlClasses.ARTIST}).a.text)
 
     @property
     @protected_from_attribute_error
@@ -14,7 +15,7 @@ class Credit:
 
         @return:
         """
-        return Artist(self.soup.find(HtmlTags.TD, {'class': HtmlClasses.ARTIST}).a.text)
+        return self._artist
 
     @property
     @protected_from_attribute_error
