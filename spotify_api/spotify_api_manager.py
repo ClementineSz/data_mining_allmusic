@@ -66,9 +66,10 @@ class SpotifyApi:
         headers = {"Authorization": f"Bearer {access_token}"}
         query = f"{album_name} artist:{artist_name}"
         params = {'q': query, 'type': 'album', 'limit': 1}
-        r = requests.get(SpotifyEndpoints.SEARCH, params=params, headers=headers)
-        parsed = r.json()
-        albums = parsed.get('albums').get('items')
+
+        url = SpotifyEndpoints.SEARCH
+        response = SpotifyApi.fetch(url, params=params, headers=headers)
+        albums = response.get('albums').get('items')
         try:
             first_result = albums[0]
         except IndexError:
@@ -108,8 +109,10 @@ class SpotifyApi:
         headers = {"Authorization": f"Bearer {access_token}"}
         query = f"{artist_name}"
         params = {'q': query, 'type': 'artist', 'limit': 1}
-        r = requests.get(SpotifyEndpoints.SEARCH, params=params, headers=headers)
-        artists = r.json().get('artists').get('items')
+        url = SpotifyEndpoints.SEARCH
+        response = SpotifyApi.fetch(url, params=params, headers=headers)
+
+        artists = response.get('artists').get('items')
         try:
             artist = artists[0]
         except IndexError:
@@ -139,18 +142,19 @@ class SpotifyApi:
         return {'name': name, 'popularity': popularity, 'followers': followers}
 
     @staticmethod
-    def fetch(headers, url):
+    def fetch(url, params=None, headers=None):
         retries = 3
         while True:
             if retries == 0:
                 logger.error("Can't access Spotify API")
                 raise RuntimeError
-            r = requests.get(url, headers=headers)
+            r = requests.get(url, params=params, headers=headers)
             logger.info(r.status_code)
-            if r.status_code == 429:
-                duration = int(r.headers.get('Retry-After'))
-                logger.warning(f"Rate limit reached, sleeping for {duration}")
-                time.sleep(duration)
+            if r.status_code != 200:
+                if r.status_code == 429:
+                    duration = int(r.headers.get('Retry-After'))
+                    logger.warning(f"Rate limit reached, sleeping for {duration}")
+                    time.sleep(duration)
                 retries -= 1
                 continue
 
@@ -166,6 +170,7 @@ class SpotifyApi:
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         url = SpotifyEndpoints.ALBUM + album_id
-        r = requests.get(url, headers=headers)
-        return r.json()
 
+        response = SpotifyApi.fetch(url, headers=headers)
+
+        return response
