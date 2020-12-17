@@ -33,8 +33,8 @@ class SpotifyAlbumNotFoundError(Exception):
 
 
 class SpotifyApi:
-    _access_token = None
-    _expiration_time = None
+    access_token = None
+    expiration_time = None
 
     @staticmethod
     def get_access_token():
