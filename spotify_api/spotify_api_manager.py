@@ -2,6 +2,7 @@ import base64
 import logging
 import os
 import time
+from datetime import datetime
 
 import requests
 from dotenv import load_dotenv
@@ -32,7 +33,8 @@ class SpotifyAlbumNotFoundError(Exception):
 
 
 class SpotifyApi:
-    access_token = None
+    _access_token = None
+    _expiration_time = None
 
     @staticmethod
     def get_access_token():
@@ -40,7 +42,8 @@ class SpotifyApi:
 
         @return: access token
         """
-
+        if SpotifyApi.access_token and datetime.now() < SpotifyApi.expiration_time:
+            return SpotifyApi.access_token
         logger.info("Getting access token")
         base64_bytes = get_encoded_client_data()
 
@@ -49,6 +52,7 @@ class SpotifyApi:
 
         result = requests.post(SpotifyEndpoints.API_TOKEN, data=data, headers=headers)
         access_token = result.json().get('access_token')
+        SpotifyApi.expiration_time = datetime.now() + result.json().get('expires_in')
         SpotifyApi.access_token = access_token
 
     @staticmethod
@@ -59,8 +63,9 @@ class SpotifyApi:
         @param artist_name:
         @return: album id from spotify
         """
-        SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {SpotifyApi.access_token}"}
+
+        token = SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
         query = f"{album_name} artist:{artist_name}"
         params = {'q': query, 'type': 'album', 'limit': 1}
 
@@ -102,9 +107,8 @@ class SpotifyApi:
         @param artist_name:
         @return:
         """
-        SpotifyApi.get_access_token()
-
-        headers = {"Authorization": f"Bearer {SpotifyApi.access_token}"}
+        token = SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
         query = f"{artist_name}"
         params = {'q': query, 'type': 'artist', 'limit': 1}
         url = SpotifyEndpoints.SEARCH
@@ -127,8 +131,8 @@ class SpotifyApi:
         """
         logger.debug(f'Fetching artist {artist_name}')
         artist_id = SpotifyApi.get_artist_id(artist_name)
-        SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {SpotifyApi.access_token}"}
+        token = SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
         url = SpotifyEndpoints.ARTIST + artist_id
 
         parsed = SpotifyApi.fetch(url, headers)
@@ -155,7 +159,6 @@ class SpotifyApi:
                     logger.warning(f"Rate limit reached, sleeping for {duration}")
                     time.sleep(duration)
                 retries -= 1
-                SpotifyApi.get_access_token()
                 time.sleep(duration)
                 continue
 
@@ -168,8 +171,8 @@ class SpotifyApi:
         @param album_id:
         @return: json with information of an album
         """
-        access_token = SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
+        token = SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {token}"}
         url = SpotifyEndpoints.ALBUM + album_id
 
         response = SpotifyApi.fetch(url, headers=headers)
