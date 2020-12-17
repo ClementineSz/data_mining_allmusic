@@ -71,7 +71,7 @@ class SpotifyApi:
         try:
             first_result = albums[0]
         except IndexError:
-            logger.error(f'No information on Spotify for {album_name}')
+            logger.warning(f'No information on Spotify for {album_name}')
             raise SpotifyAlbumNotFoundError()
         album_id = first_result.get('id')
 
@@ -84,7 +84,7 @@ class SpotifyApi:
         @param album_title:
         @param album_artist_name:
         """
-        logger.info(f'Fetching album {album_title}')
+        logger.debug(f'Fetching album {album_title}')
 
         album_id = SpotifyApi.get_album_id(album_title, album_artist_name)
 
@@ -112,7 +112,7 @@ class SpotifyApi:
         try:
             artist = artists[0]
         except IndexError:
-            logger.error(f'No information on Spotify for {artist_name}')
+            logger.warning(f'No information on Spotify for {artist_name}')
             raise SpotifyArtistNotFoundError()
         return artist.get('id')
 
@@ -123,7 +123,7 @@ class SpotifyApi:
         @param artist_name:
         @return: popularity and followers in spotify
         """
-        logger.info(f'Fetching artist {artist_name}')
+        logger.debug(f'Fetching artist {artist_name}')
         artist_id = SpotifyApi.get_artist_id(artist_name)
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}

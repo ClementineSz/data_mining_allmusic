@@ -39,8 +39,13 @@ def get_or_create(session, model, **kwargs):
 def handle_album_artists(session, model_album, album):
     if not album.artists:
         return
-    model_album.artists = [get_or_create(session, Artist, name=artist.name, popularity=artist.popularity,
-                                         followers=artist.followers) for artist in album.artists]
+    artists = []
+    for artist in album.artists:
+        model_artist = get_or_create(session, Artist, name=artist.name)
+        model_artist.popularity = artist.popularity
+        model_artist.followers = artist.followers
+        artists.append(model_artist)
+    model_album.artists = artists
 
 
 def insert_album(session, album):
@@ -76,15 +81,21 @@ def insert_album(session, album):
 
 
 def handle_album_tracks(album, model_album, session):
-    if album.details.tracks:
-        tracks = []
-        for track in album.details.tracks:
-            track_model = get_or_create(session, Track, title=track.title)
-            composers = [get_or_create(session, Artist, name=composer) for composer in track.composers]
-            track_model.duration = track.duration
-            track_model.composers = composers
-            tracks.append(track_model)
-        model_album.tracks = tracks
+    if not album.details.tracks:
+        return
+    tracks = []
+    for track in album.details.tracks:
+        model_track = get_or_create(session, Track, title=track.title)
+        composers = []
+        for composer in track.composers:
+            model_artist = get_or_create(session, Artist, name=composer.name)
+            model_artist.popularity = composer.popularity
+            model_artist.followers = composer.followers
+            composers.append(model_artist)
+        model_track.duration = track.duration
+        model_track.composers = composers
+        tracks.append(model_track)
+    model_album.tracks = tracks
 
 
 def handle_album_reviews(album, model_album, session):
@@ -121,10 +132,11 @@ def handle_album_credits(album, model_album, session):
     credits = []
     for credit in album.credits:
         for role in credit.roles:
-            db_artist = get_or_create(session, Artist, name=credit.artist.name, popularity=credit.artist.popularity,
-                                      followers=credit.artist.followers)
+            model_artist = get_or_create(session, Artist, name=credit.artist.name)
+            model_artist.popularity = credit.artist.popularity
+            model_artist.followers = credit.artist.followers
             role = get_or_create(session, Role, name=role)
-            credit = get_or_create(session, Credit, artist=db_artist, role=role)
+            credit = get_or_create(session, Credit, artist=model_artist, role=role)
 
             credits.append(credit)
     model_album.credits = credits
@@ -179,5 +191,6 @@ def insert_albums(albums: List[Album]):
     @param albums:
     """
     session = sql_session()
-    for album in albums:
+    for i, album in enumerate(albums):
+        logger.info(f"{i}/{len(albums)} - {album.title}")
         insert_album(session, album)

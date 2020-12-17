@@ -11,11 +11,12 @@ class Spotify(MiddleMan):
 
     @staticmethod
     def handle(albums):
-        for album in albums:
-            logger.info(f"Adding Spotify Information for {album.title}")
+        for i, album in enumerate(albums):
+            logger.info(f"{i}/{len(albums)} - Adding Spotify Information for {album.title}")
             Spotify.add_album_popularity(album)
             Spotify.add_credits_artists_infos(album)
             Spotify.add_album_artists(album)
+            Spotify.add_tracks_artists(album)
 
     @staticmethod
     def add_credits_artists_infos(album):
@@ -63,3 +64,14 @@ class Spotify(MiddleMan):
             album.popularity = album_spotify_info.get('popularity')
         except SpotifyAlbumNotFoundError:
             pass
+
+    @staticmethod
+    def add_tracks_artists(album):
+        for track in album.details.tracks:
+            for composer in track.composers:
+                try:
+                    spotify_artist = Spotify.get_artist_info(composer.name)
+                except SpotifyArtistNotFoundError:
+                    continue
+                composer.popularity = spotify_artist.get('popularity')
+                composer.followers = spotify_artist.get('followers')

@@ -8,7 +8,7 @@ from database import database_manager
 from orchestration import orchester
 
 logger = logging.getLogger('main')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(Colorful())
 logger.addHandler(handler)

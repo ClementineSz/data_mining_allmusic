@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from scraping.artist import Artist
 from scraping.config import HtmlTags, HtmlClasses
 from scraping.utils import protected_from_attribute_error, to_title, strip
 
@@ -7,6 +8,11 @@ from scraping.utils import protected_from_attribute_error, to_title, strip
 class Track:
     def __init__(self, soup):
         self.soup = soup
+        self._composers = []
+        composers_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.COMPOSER}).text
+        if composers_string.strip():
+            for composer_name in composers_string.split('/'):
+                self._composers.append(Artist(composer_name))
 
     @property
     @protected_from_attribute_error
@@ -17,15 +23,8 @@ class Track:
 
     @property
     @protected_from_attribute_error
-    @to_title
-    @strip
     def composers(self):
-        composers = []
-        composers_string = self.soup.find(HtmlTags.DIV, {'class': HtmlClasses.COMPOSER}).text
-        if composers_string.strip():
-            for i in composers_string.split('/'):
-                composers.append(i)
-        return composers
+        return self._composers
 
     @property
     @protected_from_attribute_error
