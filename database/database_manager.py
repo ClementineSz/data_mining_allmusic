@@ -158,6 +158,11 @@ def drop_database():
     engine.execute(f"DROP DATABASE {DB_NAME}")
 
 
+def refresh_tables():
+    drop_tables()
+    create_tables()
+
+
 def create_tables():
     """ Create the tables in the database
 

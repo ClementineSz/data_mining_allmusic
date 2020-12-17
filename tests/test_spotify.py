@@ -21,5 +21,5 @@ def test_get_access_token():
 
 
 def test_get_artist_info():
-    info = SpotifyApi.get_artist_info('Miley Cyrus')
+    info = SpotifyApi.get_artist_info('Matthew Cosgrove')
     print(info)

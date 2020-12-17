@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
 from scraping import utils
-from scraping.reviews import Reviews
 from scraping.config import Endpoints, HtmlTags, HtmlClasses
+from scraping.reviews import Reviews
 from scraping.track import Track
 from scraping.utils import protected_from_attribute_error, to_title, strip
 
@@ -14,6 +14,9 @@ class Details:
         self.album = album
         self.reviews = Reviews(self)
         self.soup = self.load_soup()
+
+        track_listing_divs = self.soup.find_all(HtmlTags.TR, {"class": HtmlClasses.TRACK})
+        self._tracks = [Track(track_div) for track_div in track_listing_divs]
 
     def load_soup(self):
         url = Endpoints.BASE + self.album.details_url
@@ -101,9 +104,8 @@ class Details:
         """ Extracts tracks from the html
         @return:
         """
-        track_listing_divs = self.soup.find_all(HtmlTags.TR, {"class": HtmlClasses.TRACK})
-        tracks = [Track(track_div) for track_div in track_listing_divs]
-        return tracks
+
+        return self._tracks
 
     @property
     @protected_from_attribute_error
