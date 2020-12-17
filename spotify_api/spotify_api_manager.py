@@ -2,7 +2,6 @@ import base64
 import logging
 import os
 import time
-from datetime import datetime
 
 import requests
 from dotenv import load_dotenv
@@ -42,7 +41,7 @@ class SpotifyApi:
 
         @return: access token
         """
-        if SpotifyApi.access_token and datetime.now() < SpotifyApi.expiration_time:
+        if SpotifyApi.access_token and time.time() < SpotifyApi.expiration_time:
             return SpotifyApi.access_token
         logger.info("Getting access token")
         base64_bytes = get_encoded_client_data()
@@ -52,8 +51,11 @@ class SpotifyApi:
 
         result = requests.post(SpotifyEndpoints.API_TOKEN, data=data, headers=headers)
         access_token = result.json().get('access_token')
-        SpotifyApi.expiration_time = datetime.now() + result.json().get('expires_in')
+        expiration_time = result.json().get('expires_in')
+        SpotifyApi.expiration_time = time.time() + expiration_time
         SpotifyApi.access_token = access_token
+        logger.info(f"Token expires in {expiration_time}")
+        return SpotifyApi.access_token
 
     @staticmethod
     def get_album_id(album_name, artist_name):
@@ -63,7 +65,6 @@ class SpotifyApi:
         @param artist_name:
         @return: album id from spotify
         """
-
         token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {token}"}
         query = f"{album_name} artist:{artist_name}"
@@ -135,7 +136,7 @@ class SpotifyApi:
         headers = {"Authorization": f"Bearer {token}"}
         url = SpotifyEndpoints.ARTIST + artist_id
 
-        parsed = SpotifyApi.fetch(url, headers)
+        parsed = SpotifyApi.fetch(url, headers=headers)
 
         popularity = parsed.get('popularity')
         name = parsed.get('name')
