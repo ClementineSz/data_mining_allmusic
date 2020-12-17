@@ -1,6 +1,7 @@
 import base64
 import logging
 import os
+import time
 
 import requests
 from dotenv import load_dotenv
@@ -128,14 +129,31 @@ class SpotifyApi:
         access_token = SpotifyApi.get_access_token()
         headers = {"Authorization": f"Bearer {access_token}"}
         url = SpotifyEndpoints.ARTIST + artist_id
-        r = requests.get(url, headers=headers)
-        parsed = r.json()
+
+        parsed = SpotifyApi.fetch(headers, url)
 
         popularity = parsed.get('popularity')
         name = parsed.get('name')
         followers = parsed.get('followers').get('total')
 
         return {'name': name, 'popularity': popularity, 'followers': followers}
+
+    @staticmethod
+    def fetch(headers, url):
+        retries = 3
+        while True:
+            if retries == 0:
+                logger.error("Can't access Spotify API")
+                raise RuntimeError
+            r = requests.get(url, headers=headers)
+            if r.status_code == 429:
+                duration = int(r.headers.get('Retry-After'))
+                logger.warning(f"Rate limit reached, sleeping for {duration}")
+                time.sleep(duration)
+                retries -= 1
+                continue
+
+            return r.json()
 
     @staticmethod
     def get_full_album_info(album_id):
