@@ -41,8 +41,6 @@ class SpotifyApi:
         @return: access token
         """
 
-        if SpotifyApi.access_token is not None:
-            return SpotifyApi.access_token
         logger.info("Getting access token")
         base64_bytes = get_encoded_client_data()
 
@@ -52,7 +50,6 @@ class SpotifyApi:
         result = requests.post(SpotifyEndpoints.API_TOKEN, data=data, headers=headers)
         access_token = result.json().get('access_token')
         SpotifyApi.access_token = access_token
-        return SpotifyApi.access_token
 
     @staticmethod
     def get_album_id(album_name, artist_name):
@@ -62,8 +59,8 @@ class SpotifyApi:
         @param artist_name:
         @return: album id from spotify
         """
-        access_token = SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
+        SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {SpotifyApi.access_token}"}
         query = f"{album_name} artist:{artist_name}"
         params = {'q': query, 'type': 'album', 'limit': 1}
 
@@ -105,8 +102,9 @@ class SpotifyApi:
         @param artist_name:
         @return:
         """
-        access_token = SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
+        SpotifyApi.get_access_token()
+
+        headers = {"Authorization": f"Bearer {SpotifyApi.access_token}"}
         query = f"{artist_name}"
         params = {'q': query, 'type': 'artist', 'limit': 1}
         url = SpotifyEndpoints.SEARCH
@@ -129,8 +127,8 @@ class SpotifyApi:
         """
         logger.debug(f'Fetching artist {artist_name}')
         artist_id = SpotifyApi.get_artist_id(artist_name)
-        access_token = SpotifyApi.get_access_token()
-        headers = {"Authorization": f"Bearer {access_token}"}
+        SpotifyApi.get_access_token()
+        headers = {"Authorization": f"Bearer {SpotifyApi.access_token}"}
         url = SpotifyEndpoints.ARTIST + artist_id
 
         parsed = SpotifyApi.fetch(url, headers)
@@ -151,11 +149,14 @@ class SpotifyApi:
             r = requests.get(url, params=params, headers=headers)
             logger.info(r.status_code)
             if r.status_code != 200:
+                duration = 1
                 if r.status_code == 429:
                     duration = int(r.headers.get('Retry-After'))
                     logger.warning(f"Rate limit reached, sleeping for {duration}")
                     time.sleep(duration)
                 retries -= 1
+                SpotifyApi.get_access_token()
+                time.sleep(duration)
                 continue
 
             return r.json()
