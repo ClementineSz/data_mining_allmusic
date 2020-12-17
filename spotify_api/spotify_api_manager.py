@@ -146,6 +146,7 @@ class SpotifyApi:
                 logger.error("Can't access Spotify API")
                 raise RuntimeError
             r = requests.get(url, headers=headers)
+            logger.info(r.status_code)
             if r.status_code == 429:
                 duration = int(r.headers.get('Retry-After'))
                 logger.warning(f"Rate limit reached, sleeping for {duration}")
