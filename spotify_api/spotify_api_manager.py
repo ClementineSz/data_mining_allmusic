@@ -133,7 +133,7 @@ class SpotifyApi:
         headers = {"Authorization": f"Bearer {access_token}"}
         url = SpotifyEndpoints.ARTIST + artist_id
 
-        parsed = SpotifyApi.fetch(headers, url)
+        parsed = SpotifyApi.fetch(url, headers)
 
         popularity = parsed.get('popularity')
         name = parsed.get('name')
