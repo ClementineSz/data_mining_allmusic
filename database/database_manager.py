@@ -142,17 +142,14 @@ def handle_album_credits(album, model_album, session):
     model_album.credits = credits
 
 
-def refresh_database():
-    drop_tables()
-    create_tables()
-
-
 def create_database():
     """ Create a database
 
     """
     engine = create_engine(SQL_URL, echo=False)
     engine.execute(f"CREATE DATABASE {DB_NAME}")
+    engine.execute(f"SET collation_connection = 'utf8_general_ci';")
+    engine.execute(f"ALTER DATABASE {DB_NAME} CHARACTER SET utf8 COLLATE utf8_general_ci;")
 
 
 def drop_database():

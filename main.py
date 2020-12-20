@@ -26,8 +26,8 @@ def main():
 
     if args.task == 'create_database':
         database_manager.create_database()
-    if args.task == 'refresh_db':
-        database_manager.refresh_database()
+    if args.task == 'refresh_tables':
+        database_manager.refresh_tables()
     elif args.task == 'create_tables':
         database_manager.create_tables()
     elif args.task == 'drop_tables':
