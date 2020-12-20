@@ -12,9 +12,10 @@ class Credits:
         self.soup = self.load_soup()
 
         section_credits = self.soup.find(HtmlTags.SECTION, {'class': HtmlClasses.CREDITS})
-        credit_tags = section_credits.find_all(HtmlTags.TD, {"class": HtmlClasses.ARTIST})
-        credit_tags = [tag.find_parent(HtmlTags.TR) for tag in credit_tags]
-        self._credits = [Credit(tag) for tag in credit_tags]
+        if section_credits:
+            credit_tags = section_credits.find_all(HtmlTags.TD, {"class": HtmlClasses.ARTIST})
+            credit_tags = [tag.find_parent(HtmlTags.TR) for tag in credit_tags]
+            self._credits = [Credit(tag) for tag in credit_tags]
 
     def load_soup(self):
         url = utils.create_url(Endpoints.BASE, self.album.details_url, Endpoints.CREDITS)
