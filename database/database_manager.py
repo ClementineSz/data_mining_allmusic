@@ -45,6 +45,8 @@ def handle_album_artists(session, model_album, album):
     artists = []
     for artist in album.artists:
         model_artist = get_or_create(session, Artist, name=artist.name)
+        if not model_artist:
+            continue
         model_artist.popularity = artist.popularity
         model_artist.followers = artist.followers
         artists.append(model_artist)
@@ -92,6 +94,8 @@ def handle_album_tracks(album, model_album, session):
         composers = []
         for composer in track.composers:
             model_artist = get_or_create(session, Artist, name=composer.name)
+            if not model_artist:
+                continue
             model_artist.popularity = composer.popularity
             model_artist.followers = composer.followers
             composers.append(model_artist)
@@ -136,6 +140,8 @@ def handle_album_credits(album, model_album, session):
     for credit in album.credits:
         for role in credit.roles:
             model_artist = get_or_create(session, Artist, name=credit.artist.name)
+            if not model_artist:
+                continue
             model_artist.popularity = credit.artist.popularity
             model_artist.followers = credit.artist.followers
             role = get_or_create(session, Role, name=role)
