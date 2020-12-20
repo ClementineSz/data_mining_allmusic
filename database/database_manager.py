@@ -42,8 +42,6 @@ def handle_album_artists(session, model_album, album):
     artists = []
     for artist in album.artists:
         model_artist = get_or_create(session, Artist, name=artist.name)
-        if not model_artist:
-            continue
         model_artist.popularity = artist.popularity
         model_artist.followers = artist.followers
         artists.append(model_artist)
@@ -65,8 +63,8 @@ def insert_album(session, album):
     model_album.genre = genre
     model_album.title = album.title
     model_album.review_body = review_body
-    model_album.headline_review_author = album.headline_review.author
-    model_album.headline_review_content = album.headline_review.content
+    # model_album.headline_review_author = album.headline_review.author
+    # model_album.headline_review_content = album.headline_review.content
     model_album.popularity = album.popularity
 
     handle_album_artists(session, model_album, album)
@@ -91,8 +89,6 @@ def handle_album_tracks(album, model_album, session):
         composers = []
         for composer in track.composers:
             model_artist = get_or_create(session, Artist, name=composer.name)
-            if not model_artist:
-                continue
             model_artist.popularity = composer.popularity
             model_artist.followers = composer.followers
             composers.append(model_artist)
@@ -137,8 +133,6 @@ def handle_album_credits(album, model_album, session):
     for credit in album.credits:
         for role in credit.roles:
             model_artist = get_or_create(session, Artist, name=credit.artist.name)
-            if not model_artist:
-                continue
             model_artist.popularity = credit.artist.popularity
             model_artist.followers = credit.artist.followers
             role = get_or_create(session, Role, name=role)
@@ -154,7 +148,6 @@ def create_database():
     """
     engine = create_engine(SQL_URL, echo=False)
     engine.execute(f"CREATE DATABASE {DB_NAME}")
-    engine.execute(f"SET collation_connection = 'utf8_general_ci';")
 
 
 def drop_database():
@@ -163,6 +156,7 @@ def drop_database():
     """
     engine = create_engine(SQL_URL + DB_NAME, echo=False)
     engine.execute(f"DROP DATABASE {DB_NAME}")
+    engine.execute(f"ALTER TABLE review_body CONVERT TO CHARACTER SET utf8;")
 
 
 def refresh_tables():
@@ -176,6 +170,7 @@ def create_tables():
     """
     engine = create_engine(SQL_URL + DB_NAME, echo=False)
     Base.metadata.create_all(engine)
+    engine.execute(f"ALTER TABLE review_body CONVERT TO CHARACTER SET utf8;")
 
 
 def drop_tables():
@@ -191,7 +186,7 @@ def sql_session():
 
     @return:
     """
-    engine = create_engine(SQL_URL + DB_NAME, echo=False, convert_unicode=True)
+    engine = create_engine(SQL_URL + DB_NAME, echo=False)
     Session = sessionmaker()
     Session.configure(bind=engine)
     return Session()
@@ -205,9 +200,4 @@ def insert_albums(albums: List[Album]):
     session = sql_session()
     for i, album in enumerate(albums):
         logger.info(f"{i}/{len(albums)} - {album.title}")
-
-        try:
-            insert_album(session, album)
-        except AttributeError:
-            session.rollback()
-            continue
+        insert_album(session, album)
