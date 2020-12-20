@@ -154,6 +154,7 @@ def create_database():
     """
     engine = create_engine(SQL_URL, echo=False)
     engine.execute(f"CREATE DATABASE {DB_NAME}")
+    engine.execute(f"SET collation_connection = 'utf8_general_ci';")
 
 
 def drop_database():
