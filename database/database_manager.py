@@ -26,10 +26,7 @@ def get_or_create(session, model, **kwargs):
     Check if the instance exists in the database and if not, creates it
 
     """
-    try:
-        instance = session.query(model).filter_by(**kwargs).first()
-    except AttributeError:
-        return
+    instance = session.query(model).filter_by(**kwargs).first()
     if instance:
         return instance
     else:
@@ -193,7 +190,7 @@ def sql_session():
 
     @return:
     """
-    engine = create_engine(SQL_URL + DB_NAME, echo=False)
+    engine = create_engine(SQL_URL + DB_NAME, echo=False, convert_unicode=True)
     Session = sessionmaker()
     Session.configure(bind=engine)
     return Session()
@@ -208,4 +205,7 @@ def insert_albums(albums: List[Album]):
     for i, album in enumerate(albums):
         logger.info(f"{i}/{len(albums)} - {album.title}")
 
-        insert_album(session, album)
+        try:
+            insert_album(session, album)
+        except AttributeError:
+            continue
