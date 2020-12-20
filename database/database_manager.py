@@ -142,6 +142,11 @@ def handle_album_credits(album, model_album, session):
     model_album.credits = credits
 
 
+def refresh_database():
+    drop_tables()
+    create_tables()
+
+
 def create_database():
     """ Create a database
 
