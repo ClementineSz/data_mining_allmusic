@@ -208,4 +208,5 @@ def insert_albums(albums: List[Album]):
         try:
             insert_album(session, album)
         except AttributeError:
+            session.rollback()
             continue
